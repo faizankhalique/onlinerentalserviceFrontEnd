@@ -1,0 +1,227 @@
+<div className="card" style={{ width: "18rem" }}>
+                      <img
+                        src={
+                          "F:8th semesterFYPOnline Rental Service\router-appsrccomponents"
+                        }
+                        className="card-img-top"
+                        alt={"..."}
+                      />
+                      <div className="card-body">
+                        <h5 className="card-title">Card title</h5>
+                        <p className="card-text">
+                          Some quick example text to build on the card title and
+                          make up the bulk of the card's content.
+                        </p>
+                        <a href="#" className="btn btn-primary">
+                          Go somewhere
+                        </a>
+                      </div>
+                    </div>
+                    <------------------------------------------->
+                    // sendImage.py
+import requests
+img_path = './path/to/img'
+url = 'http://www.yourwebserver.com/api/img'
+files = {'file': ('image.jpg', open(img_path, 'rb'), 'image/jpeg')}
+r = requests.post(url, files=files)
+print(r.text)
+// ImgModel.js
+var mongoose = require('mongoose')
+var Schema = mongoose.Schema;
+var ImgSchema = new Schema({
+    img: { data: Buffer, contentType: String}
+}, {
+    timestamps: true
+});
+module.exports = mongoose.model('Img', ImgSchema);
+// server.js
+const express = require('express');
+const fs = require('fs');
+var app = express();
+var router = express.Router();
+const storage = multer.diskStorage({
+    destination: function (req, res, cb) {
+        cb(null, 'uploads/')
+    }
+});
+const multer = require('multer');
+const upload = multer({ storage: storage });
+router.route('/img_data')
+.post(upload.single('file'), function(req, res) {
+    var new_img = new Img;
+    new_img.img.data = fs.readFileSync(req.file.path)
+    new_img.img.contentType = 'image/jpeg';  // or 'image/png'
+    new_img.save();
+res.json({ message: 'New image added to the db!' });
+})
+.get(function(req, res) {
+    Img.findOne({}, 'img createdAt', function(err, img) {
+        if (err)
+            res.send(err);
+        res.contentType('json');
+        res.send(img);
+    }).sort({ createdAt: 'desc' });
+});
+
+
+// index.js
+import React, { Component } from 'react';
+class Image extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            img: ''
+        };
+    };
+    arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return window.btoa(binary);
+    };
+    componentDidMount() {
+        fetch('http://yourserver.com/api/img_data')
+        .then((res) => res.json())
+        .then((data) => {
+            var base64Flag = 'data:image/jpeg;base64,';
+            var imageStr =
+                this.arrayBufferToBase64(data.img.data.data);
+            this.setState({
+                img: base64Flag + imageStr
+            )}
+        })
+    }
+    render() {
+        const {img} = this.state;
+        return (
+            <img
+                src={img}
+                alt='Helpful alt text'/>
+        )
+    }
+export default Image;
+
+
+
+
+<---------------------------------------------------------------------------------------------------------->
+import React, { Component } from "react";
+import http from "./services/httpService";
+import { toast } from "react-toastify";
+import UploadFiles from "./common/uploadFiles";
+class Home extends Component {
+  state = { image: "" };
+  arrayBufferToBase64(buffer) {
+    let binary = "";
+    let bytes = [].slice.call(new Uint8Array(buffer));
+    bytes.forEach(b => (binary += String.fromCharCode(b)));
+    return window.btoa(binary);
+  }
+  async componentDidMount() {
+    try {
+      const response = await http.get("http://localhost:8000/api/userimages");
+      if (response && response.data) {
+        const { data } = response;
+        let base64Flag = "data:image/jpeg;base64,";
+        let imageStr = this.arrayBufferToBase64(data.image.data.data);
+        this.setState({ image: base64Flag + imageStr });
+      }
+    } catch (error) {
+      toast.error("" + error);
+    }
+  }
+
+  render() {
+    const { image } = this.state;
+    return (
+      <React.Fragment>
+        <h1>Home</h1>
+        <img
+          src={image}
+          className="img-responsive"
+          alt="Helpful alt text"
+          width={400}
+          height={300}
+        />
+        {/* <br />
+        <UploadFiles
+          filesLength={2}
+          fileSize={2}
+          filesType={["image/png", "image/jpeg", "image/gif", "image/jpg"]}
+          // onImageStatus={this.handleImageStatus}
+          url="productimages"
+        /> */}
+      </React.Fragment>
+    );
+  }
+}
+
+export default Home;
+<---------------------------------------------------------------------------------------------------------------------->
+{/* <ToastContainer />
+        <Navbar />
+        <br />
+        <div className="container-fluid">
+          <div className="row" style={{ marginTop: "12px" }}>
+            {user && user.accountType === "productowner" && (
+              <div className="col-lg-3" style={{ marginLeft: "-45px" }}>
+                <ProductOwnerGroupList />
+              </div>
+            )}
+            <div className="col-lg-9">
+              <Switch>
+                <Route path="/vehicles" component={Vehicle} />
+                <Route path="/houses" component={House} />
+                <Route path="/tools" component={Tool} />
+                <Route path="/registerUser" component={RegisterUser} />
+                {user && user.accountType === "productowner" && (
+                  <Route path="/vehicleForm" component={VehicleForm} />
+                )}
+                <Route path="/admin" component={Admin} />
+                <Route path="/userProfile" component={UserProfile} />
+                <Route path="/logOut" component={LogOut} />
+                <Route exact path="/home" component={Home} />
+                <Route path="/not-found" component={NotFound} />
+                <Route exact path="/" component={Home} />
+                <Redirect to="/not-found" />
+              </Switch>
+            </div>
+          </div>
+        </div> */}
+
+
+
+        <..............................................................>
+         {currentPath !== "/" &&
+          currentPath !== "/home" &&
+          currentPath !== "/vehicles" &&
+          currentPath !== "/tools" &&
+          currentPath !== "/houses" &&
+          currentPath !== "/vehicleRequestForm" &&
+          currentPath !== "/vehicleRequestDetails" &&
+          currentPath !== "/userProfile" &&
+          currentPath !== "/logOut" &&
+          currentPath !== "/registerUser" &&
+          currentPath !== "/vehicleRequests" &&
+          currentPath !== "/vehicles/:id" &&
+          currentPath !== "/admin" && (
+            <React.Fragment>
+              <div className="wrapper" style={{ marginTop: "40px" }}>
+                {/* page-content */}
+                <div>
+                  <div className="container-fluid">
+                    <div className="row">
+                      <div className="col-lg-12">
+                        <ToastContainer />
+                        <br />
+                        <Switch>
+                          <Route path="/not-found" component={NotFound} />
+                          <Redirect to="/not-found" />
+                        </Switch>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </React.Fragment>
+          )}
