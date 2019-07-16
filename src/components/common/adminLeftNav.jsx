@@ -61,16 +61,23 @@ class AdminLeftNav extends Component {
                 Owners
               </i>
             </NavLink>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-              <NavLink className="dropdown-item" to="#">
-                Action
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
+              <NavLink className="dropdown-item" to="/owners">
+                All
               </NavLink>
               <NavLink className="dropdown-item" to="#">
-                Another action
+                Vehicles
+              </NavLink>
+              <NavLink className="dropdown-item" to="#">
+                Houses
               </NavLink>
               <div className="dropdown-divider" />
               <NavLink className="dropdown-item" to="#">
-                Something else here
+                Tools
               </NavLink>
             </div>
           </li>
@@ -90,7 +97,11 @@ class AdminLeftNav extends Component {
                 Renters
               </i>
             </NavLink>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
               <NavLink className="dropdown-item" to="#">
                 Action
               </NavLink>
@@ -119,7 +130,11 @@ class AdminLeftNav extends Component {
                 Properties
               </i>
             </NavLink>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
               <NavLink className="dropdown-item" to="#">
                 Action
               </NavLink>
@@ -147,7 +162,11 @@ class AdminLeftNav extends Component {
                 Tools
               </i>
             </NavLink>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
               <NavLink className="dropdown-item" to="#">
                 Action
               </NavLink>

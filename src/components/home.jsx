@@ -3,6 +3,7 @@ import http from "./services/httpService";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { getVehicles } from "./services/vehicleService";
+import authService from "./services/authService";
 // import UploadFiles from "./common/uploadFiles";
 // import { async } from './services/registeredProductsService';
 class Home extends Component {
@@ -36,6 +37,7 @@ class Home extends Component {
 
   render() {
     const { vehicles } = this.state;
+    const user = authService.getCurrentUser();
     return (
       <React.Fragment>
         {vehicles.map(vehicle => (
@@ -69,23 +71,30 @@ class Home extends Component {
                   View Details
                 </button>
               </Link>
-              <button
-                className="btn btn-outline-primary btn-sm"
-                style={{ margin: "2px" }}
+              <Link
+                to={
+                  user && user.accountType === "renter"
+                    ? "/vehicleRentRequestForm"
+                    : "/registerUser"
+                }
               >
-                Book Now
-              </button>
+                {" "}
+                <button
+                  className="btn btn-outline-primary btn-sm"
+                  style={{ margin: "2px" }}
+                  disabled={
+                    (user && user.accountType === "admin") ||
+                    (user && user.accountType === "productowner")
+                      ? true
+                      : false
+                  }
+                >
+                  Book Now
+                </button>
+              </Link>
             </div>
           </div>
         ))}
-        {/* <div className="container-fluid">
-          style={{ border: "solid 1px black" }}
-          <div className="row">
-            <div className="col-lg-12">
-              
-            </div>
-          </div>
-        </div> */}
       </React.Fragment>
     );
   }

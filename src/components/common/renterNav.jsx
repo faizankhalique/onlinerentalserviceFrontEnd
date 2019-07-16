@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import authService from "../services/authService";
-class OwnerNav extends Component {
+class RenterNav extends Component {
   state = {};
   render() {
     const user = authService.getCurrentUser();
@@ -12,7 +12,7 @@ class OwnerNav extends Component {
           style={{ backgroundColor: "#39CCCC" }}
         >
           <NavLink className="navbar-brand" to="#">
-            Product Owner
+            Renter
           </NavLink>
           <button
             className="navbar-toggler"
@@ -95,4 +95,4 @@ class OwnerNav extends Component {
   }
 }
 
-export default OwnerNav;
+export default RenterNav;

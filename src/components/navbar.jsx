@@ -9,8 +9,8 @@ class Navbar extends Component {
     return (
       <React.Fragment>
         <nav
-          className="navbar  fixed-top navbar-expand-lg navbar-dark bg-dark"
-          style={{ height: "70px" }}
+          className="navbar  fixed-top navbar-expand-lg navbar-dark"
+          style={{ height: "70px", background: "#2c3e50" }}
         >
           <Link className="navbar-brand" to="/">
             <img

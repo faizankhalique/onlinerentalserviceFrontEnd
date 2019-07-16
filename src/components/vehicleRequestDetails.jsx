@@ -202,44 +202,44 @@ class VehicleRequestDetails extends Component {
               <table className="table table-bordered">
                 <thead>
                   <tr>
-                    <th scope="col">VehicleName</th>
-                    <td scope="col">{vehicleRequest.vehicleName}</td>
+                    <th>VehicleName</th>
+                    <td>{vehicleRequest.vehicleName}</td>
                   </tr>
                   <tr>
-                    <th scope="col">VehicleModel</th>
-                    <td scope="col">{vehicleRequest.vehicleModel}</td>
+                    <th>VehicleModel</th>
+                    <td>{vehicleRequest.vehicleModel}</td>
                   </tr>
                   <tr>
-                    <th scope="col">VehicleN0</th>
-                    <td scope="col"> {vehicleRequest.vehicleNo}</td>
+                    <th>VehicleN0</th>
+                    <td> {vehicleRequest.vehicleNo}</td>
                   </tr>
                   <tr>
-                    <th scope="col">VehicleType</th>
-                    <td scope="col">{vehicleRequest.vehicleType}</td>
+                    <th>VehicleType</th>
+                    <td>{vehicleRequest.vehicleType}</td>
                   </tr>
                   <tr>
-                    <th scope="col">VehicleColour</th>
-                    <td scope="col">{vehicleRequest.vehicleColour}</td>
+                    <th>VehicleColour</th>
+                    <td>{vehicleRequest.vehicleColour}</td>
                   </tr>
                   <tr>
-                    <th scope="col">VehicleCompany</th>
-                    <td scope="col">{vehicleRequest.vehicleCompany}</td>
+                    <th>VehicleCompany</th>
+                    <td>{vehicleRequest.vehicleCompany}</td>
                   </tr>
                   <tr>
-                    <th scope="col">VehicleRent</th>
-                    <td scope="col">{vehicleRequest.vehicleRent}</td>
+                    <th>VehicleRent</th>
+                    <td>{vehicleRequest.vehicleRent}</td>
                   </tr>
                   <tr>
-                    <th scope="col">Request-Status</th>
-                    <td scope="col">{vehicleRequest.status}</td>
+                    <th>Request-Status</th>
+                    <td>{vehicleRequest.status}</td>
                   </tr>
                   <tr>
-                    <th scope="col">MemberShip</th>
-                    <td scope="col">{vehicleRequest.memberShipDuration}</td>
+                    <th>MemberShip</th>
+                    <td>{vehicleRequest.memberShipDuration}</td>
                   </tr>
                   <tr>
-                    <th scope="col">RequestDate</th>
-                    <td scope="col">{vehicleRequest.requestDate}</td>
+                    <th>RequestDate</th>
+                    <td>{vehicleRequest.requestDate}</td>
                   </tr>
                 </thead>
               </table>

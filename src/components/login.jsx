@@ -3,6 +3,7 @@ import Input from "./common/input";
 import Joi from "joi-browser";
 import auth from "./services/authService";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 // import RadioButton from "./common/radioButton";
 class Login extends Component {
   state = {
@@ -138,6 +139,21 @@ class Login extends Component {
                       Login
                     </button>
                   </div>
+                  <center>
+                    {" "}
+                    <Link
+                      type="rest"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      style={{ color: "white" }}
+                      to="/registerUser"
+                      onClick={() => {
+                        window.location.href = "/registerUser";
+                      }}
+                    >
+                      or sign-up
+                    </Link>
+                  </center>
                 </form>
               </div>
             </div>

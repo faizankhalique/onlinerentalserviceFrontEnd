@@ -19,10 +19,14 @@ import VehicleRequestForm from "./components/vehicleRequestForm";
 import AdminLeftNav from "./components/common/adminLeftNav";
 import OwnerNav from "./components/common/ownerNav";
 import AdminNav from "./components/common/adminNav";
-import "./App.css";
 import VehicleRequests from "./components/vehiclesRequests";
 import VehicleRequestDetails from "./components/vehicleRequestDetails";
-import VehicleDetials from "./vehicleDetails";
+import VehicleDetials from "./components/vehicleDetails";
+import Owners from "./components/owners";
+import "./App.css";
+import RenterLeftNav from "./components/common/renterLeftNav";
+import VehicleRentRequestForm from "./components/vehicleRentRequestForm";
+import RenterNav from "./components/common/renterNav";
 
 class App extends Component {
   render() {
@@ -43,6 +47,10 @@ class App extends Component {
               <Switch>
                 <Route exact path="/home" component={Home} />
                 <Route path="/vehicleDetails" component={VehicleDetials} />
+                <Route
+                  path="/vehicleRentRequestForm"
+                  component={VehicleRentRequestForm}
+                />
                 <Route path="/vehicles" component={Vehicle} />
                 <Route path="/houses" component={House} />
                 <Route path="/tools" component={Tool} />
@@ -81,12 +89,14 @@ class App extends Component {
         {/* Common-public View */}
         {user &&
           (user.accountType === "admin" ||
-            user.accountType === "productowner") &&
+            user.accountType === "productowner" ||
+            user.accountType === "renter") &&
           (currentPath === "/" ||
             currentPath === "/home" ||
             currentPath === "/vehicles" ||
             currentPath === "/houses" ||
             currentPath === "/vehicleDetails" ||
+            currentPath === "/vehicleRentRequestForm" ||
             currentPath === "/tools") && (
             <React.Fragment>
               <Navbar />
@@ -96,6 +106,12 @@ class App extends Component {
                 <br />
                 <Switch>
                   <Route exact path="/home" component={Home} />
+                  {user.accountType === "renter" && (
+                    <Route
+                      path="/vehicleRentRequestForm"
+                      component={VehicleRentRequestForm}
+                    />
+                  )}
                   <Route path="/vehicleDetails" component={VehicleDetials} />
                   <Route path="/vehicles" component={Vehicle} />
                   <Route path="/houses" component={House} />
@@ -147,23 +163,50 @@ class App extends Component {
                 {/* page-content */}
                 <div className="page-content-wrapper">
                   <OwnerNav />
-                  <div className="container-fluid">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <ToastContainer />
-                        <br />
-                        <Switch>
-                          <Route
-                            path="/vehicleRequestForm"
-                            component={VehicleRequestForm}
-                          />
+                  <ToastContainer />
 
-                          <Route path="/userProfile" component={UserProfile} />
-                          <Route path="/logOut" component={LogOut} />
-                        </Switch>
-                      </div>
-                    </div>
-                  </div>
+                  <br />
+                  <Switch>
+                    <Route
+                      path="/vehicleRequestForm"
+                      component={VehicleRequestForm}
+                    />
+
+                    <Route path="/userProfile" component={UserProfile} />
+                    <Route path="/logOut" component={LogOut} />
+                  </Switch>
+                </div>
+              </div>
+            </React.Fragment>
+          )}
+        {/* Renter View */}
+        {user &&
+          user.accountType === "renter" &&
+          (currentPath === "/userProfile" ||
+            // currentPath === "/vehicleRentRequestForm" ||
+            currentPath === "/logOut") && (
+            <React.Fragment>
+              {/* <Navbar /> */}
+              <div className="wrapper">
+                {/* sidebar */}
+                <div className="left-nav">
+                  <RenterLeftNav />
+                </div>
+                {/* page-content */}
+                <div className="page-content-wrapper">
+                  <RenterNav />
+                  <ToastContainer />
+
+                  <br />
+                  <Switch>
+                    {/* <Route
+                      path="/vehicleRentRequestForm"
+                      component={VehicleRentRequestForm}
+                    /> */}
+
+                    <Route path="/userProfile" component={UserProfile} />
+                    <Route path="/logOut" component={LogOut} />
+                  </Switch>
                 </div>
               </div>
             </React.Fragment>
@@ -175,6 +218,7 @@ class App extends Component {
           (currentPath === "/admin" ||
             currentPath === "/vehicleRequests" ||
             currentPath === "/vehicleRequestDetails" ||
+            currentPath === "/owners" ||
             currentPath === "/userProfile" ||
             currentPath === "/logOut") && (
             <React.Fragment>
@@ -187,28 +231,24 @@ class App extends Component {
                 {/* page-content */}
                 <div className="page-content-wrapper">
                   <AdminNav />
-                  <div className="container-fluid">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <ToastContainer />
-                        {/* <br /> */}
-                        <Switch>
-                          <Route path="/admin" component={Admin} />
-                          <Route
-                            path="/vehicleRequests"
-                            component={VehicleRequests}
-                          />
+                  <ToastContainer />
 
-                          <Route
-                            path="/vehicleRequestDetails"
-                            component={VehicleRequestDetails}
-                          />
-                          <Route path="/userProfile" component={UserProfile} />
-                          <Route path="/logOut" component={LogOut} />
-                        </Switch>
-                      </div>
-                    </div>
-                  </div>
+                  {/* <br /> */}
+                  <Switch>
+                    <Route path="/admin" component={Admin} />
+                    <Route
+                      path="/vehicleRequests"
+                      component={VehicleRequests}
+                    />
+
+                    <Route
+                      path="/vehicleRequestDetails"
+                      component={VehicleRequestDetails}
+                    />
+                    <Route path="/userProfile" component={UserProfile} />
+                    <Route path="/owners" component={Owners} />
+                    <Route path="/logOut" component={LogOut} />
+                  </Switch>
                 </div>
               </div>
             </React.Fragment>
@@ -227,7 +267,10 @@ class App extends Component {
           currentPath !== "/logOut" &&
           currentPath !== "/registerUser" &&
           currentPath !== "/vehicleDetails" &&
-          currentPath !== "/admin" && (
+          currentPath !== "/owners" &&
+          currentPath !== "/admin" &&
+          currentPath !== "/renter" &&
+          currentPath !== "/vehicleRentRequestForm" && (
             <React.Fragment>
               <div className="wrapper" style={{ marginTop: "40px" }}>
                 {/* page-content */}
