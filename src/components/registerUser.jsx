@@ -96,8 +96,7 @@ class RegisterUser extends Component {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-sm-12 ">
-            <div className="page-header" />
+          <div className="col-sm-12 " style={{ marginLeft: "65px" }}>
             <form
               onSubmit={this.handleSubmit}
               className="card"
@@ -194,7 +193,7 @@ class RegisterUser extends Component {
                 />
                 <UploadFiles
                   filesLength={1}
-                  fileSize={2}
+                  fileSize={8.5}
                   filesType={[
                     "image/png",
                     "image/jpeg",

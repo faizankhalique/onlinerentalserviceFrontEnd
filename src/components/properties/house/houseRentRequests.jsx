@@ -1,0 +1,189 @@
+import React, { Component } from "react";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import {
+  getHouseRentRequests,
+  deleteHouseRentRequest
+} from "../../services/properties/house/houseBookingService";
+class HouseRentRequests extends Component {
+  state = {
+    houseRentRequests: []
+  };
+  async componentDidMount() {
+    try {
+      const { data: houseRentRequests } = await getHouseRentRequests();
+      if (houseRentRequests) {
+        this.setState({ houseRentRequests });
+      }
+    } catch (error) {
+      toast.error(error + "");
+    }
+  }
+  handleDelete = async id => {
+    const confirm = window.confirm("Do you want to Delete Request?");
+    if (confirm) {
+      const orignalHouseRentRequests = this.state.houseRentRequests;
+      const houseRentRequests = orignalHouseRentRequests.filter(
+        hr => hr._id !== id
+      );
+      this.setState({ houseRentRequests });
+      try {
+        const { data: response } = await deleteHouseRentRequest(id);
+        if (response) toast.success("House Request Delete Successfuly");
+      } catch (error) {
+        if (error.response && error.response.status === 400)
+          toast.error(`Error:400 ${error.response.data}`);
+        else if (error.response && error.response.status === 404)
+          toast.error(`This Request been deleted:404 (not found)`);
+        else if (error.response && error.response.status === 401)
+          toast.error(`Error:401 ${error.response.statusText}`);
+        else if (error.response && error.response.status === 403)
+          toast.error(`Error:403 ${error.response.statusText}`);
+        else toast.error(`${error.response.data}`);
+        this.setState({ houseRentRequests: orignalHouseRentRequests });
+      }
+    }
+  };
+  render() {
+    const { houseRentRequests } = this.state;
+    return (
+      <React.Fragment>
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-12">
+              <table className="table">
+                <thead className="thead-dark">
+                  <tr>
+                    <th scope="col">RequesterName</th>
+                    <th scope="col">HouseLocation</th>
+                    <th scope="col">HouseOwner</th>
+                    <th scope="col">StartDate</th>
+                    <th scope="col">EndDate</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">RequestDate</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {houseRentRequests.map(
+                    houseRentRequest =>
+                      houseRentRequest.status == "Pending" && (
+                        <tr key={houseRentRequest._id}>
+                          <td>
+                            <Link
+                              to={{
+                                pathname: "/renterDetails",
+                                state: {
+                                  renterId: houseRentRequest.renter._id
+                                }
+                              }}
+                            >
+                              {houseRentRequest.renter.fullName}
+                            </Link>
+                          </td>
+                          <td>
+                            <Link
+                              to={{
+                                pathname: "/houseRentRequestDetails",
+                                state: {
+                                  houseRentRequest: houseRentRequest
+                                }
+                              }}
+                            >
+                              {houseRentRequest.house.city}
+                            </Link>
+                          </td>
+                          <td>{houseRentRequest.owner.fullName}</td>
+                          <td>{houseRentRequest.startDate}</td>
+                          <td>{houseRentRequest.endDate}</td>
+                          <td>{houseRentRequest.status}</td>
+                          <td>{houseRentRequest.requestDate}</td>
+
+                          <td>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => {
+                                this.handleDelete(houseRentRequest._id);
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              <table className="table">
+                <thead className="thead-dark">
+                  <tr>
+                    <th scope="col">RequesterName</th>
+                    <th scope="col">HouseLocation</th>
+                    <th scope="col">HouseOwner</th>
+                    <th scope="col">StartDate</th>
+                    <th scope="col">EndDate</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">ApprovedDate</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {houseRentRequests.map(
+                    houseRentRequest =>
+                      houseRentRequest.status == "Approved" && (
+                        <tr key={houseRentRequest._id}>
+                          <td>
+                            <Link
+                              to={{
+                                pathname: "/renterDetails",
+                                state: {
+                                  renterId: houseRentRequest.renter._id
+                                }
+                              }}
+                            >
+                              {houseRentRequest.renter.fullName}
+                            </Link>
+                          </td>
+
+                          <td>
+                            <Link
+                              to={{
+                                pathname: "/houseDetails",
+                                state: {
+                                  houseId: houseRentRequest.house._id,
+                                  admin: true
+                                }
+                              }}
+                            >
+                              {houseRentRequest.house.city}
+                            </Link>
+                          </td>
+                          <td>{houseRentRequest.owner.fullName}</td>
+                          <td>{houseRentRequest.startDate}</td>
+                          <td>{houseRentRequest.endDate}</td>
+                          <td>{houseRentRequest.status}</td>
+                          <td>{houseRentRequest.ApprovedDate}</td>
+
+                          <td>
+                            <button className="btn btn-sm btn-danger">
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  }
+}
+
+export default HouseRentRequests;

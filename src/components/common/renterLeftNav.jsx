@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 class RenterLeftNav extends Component {
   state = {};
   render() {
@@ -15,23 +15,87 @@ class RenterLeftNav extends Component {
             </Link>
           </li>
           <li>
-            <Link to="#">
+            <NavLink
+              className="nav-link dropdown-toggle"
+              to="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               <i className="fa fa-bell" aria-hidden="true">
                 {" "}
-                Notification
+                Requests Status
               </i>
-            </Link>
+            </NavLink>
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
+              <NavLink
+                className="dropdown-item"
+                to="/renterVehiclesRequestsHistory"
+              >
+                Vehicles
+              </NavLink>
+              <NavLink
+                className="dropdown-item"
+                to="/renterHousesRequestsHistory"
+              >
+                Houses
+              </NavLink>
+              <NavLink
+                className="dropdown-item"
+                to="/renterShopsRequestsHistory"
+              >
+                Shops
+              </NavLink>
+              <NavLink
+                className="dropdown-item"
+                to="/renterToolsRequestsHistory"
+              >
+                Tools
+              </NavLink>
+            </div>
           </li>
           <li>
-            <Link to="#">
+            <NavLink
+              className="nav-link dropdown-toggle"
+              to="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               <i className="fa fa-arrow-circle-right" aria-hidden="true">
                 {" "}
-                Products status
+                Bookings status
               </i>
-            </Link>
+            </NavLink>
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
+              <NavLink className="dropdown-item" to="/renterVehicleBookings">
+                Vehicles
+              </NavLink>
+              <NavLink className="dropdown-item" to="/renterHouseBookings">
+                Houses
+              </NavLink>
+              <NavLink className="dropdown-item" to="/renterShopBookings">
+                Shops
+              </NavLink>
+              <NavLink className="dropdown-item" to="/renterToolsBookings">
+                Tools
+              </NavLink>
+            </div>
           </li>
-          <li>
-            <Link to="/vehicleRentRequestForm">
+          {/* <li>
+            <Link to="#">
               <i className="fa fa-bus" aria-hidden="true">
                 {" "}
                 Vehicle Rent Request
@@ -52,7 +116,7 @@ class RenterLeftNav extends Component {
                 Tool Rent Request
               </i>
             </Link>
-          </li>
+          </li> */}
         </ul>
       </React.Fragment>
     );

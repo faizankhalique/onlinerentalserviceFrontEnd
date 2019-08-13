@@ -3,27 +3,48 @@ import Joi from "joi-browser";
 import Input from "./common/input";
 import TextArea from "./common/textArea";
 import { addVehicleRentRequest } from "./services/vehicleRentRequestService";
+import diff_days from "../utils/diff_days";
 import { toast } from "react-toastify";
 class VehicleRentRequestForm extends Component {
   state = {
     account: {
       requester: "sadd",
+      vehicle: "",
       duration: "",
       purpose: "",
       licenseNo: "",
       startDate: "",
       endDate: ""
     },
-    errors: []
+    errors: [],
+    vehicleImage: "",
+    vehicleRent: "",
+    vehicle: {}
   };
   schema = {
     requester: Joi.string(),
+    vehicle: Joi.string(),
     duration: Joi.string().required(),
     purpose: Joi.string().required(),
     licenseNo: Joi.string().required(),
     startDate: Joi.string().required(),
     endDate: Joi.string().required()
   };
+  componentDidMount() {
+    const { vehicle } = this.props.location.state;
+
+    const account = { ...this.state.account };
+    let vehicleImage = { ...this.state.vehicleImage };
+    vehicleImage = vehicle.vehicleImages[0];
+    account.vehicle = vehicle._id;
+
+    this.setState({
+      account,
+      vehicleImage,
+      vehicle,
+      vehicleRent: vehicle.vehicleRent
+    });
+  }
   validate = () => {
     const options = { abortEarly: false };
     const { error } = Joi.validate(this.state.account, this.schema, options);
@@ -46,13 +67,32 @@ class VehicleRentRequestForm extends Component {
     this.setState({ errors: errors || {} });
     console.log("errors", errors);
     if (errors) return;
+    const { account, vehicleRent } = this.state;
+    const date1 = new Date(account.startDate + ",00:00");
+    const date2 = new Date(account.endDate + ",00:00");
+    let days = 0;
+    let totalRent = 0;
+    if (date2 > date1) {
+      days = parseInt(diff_days(date2, date1));
+      totalRent = days * parseInt(vehicleRent);
+    } else if (date1 > date2) {
+      toast.error("endDate must be greater than  startdate.");
+      return;
+    } else {
+      totalRent = 1 * parseInt(vehicleRent);
+      days = 1;
+    }
     try {
       const vehicleRentRequest = { ...this.state.account };
-      console.log(vehicleRentRequest);
-      const response = await addVehicleRentRequest(vehicleRentRequest);
-      if (response) {
-        toast.success("Your request send to Admin Successfully");
-        window.location.href = "/vehicleRentRequestForm";
+      const confirm = window.confirm(
+        `your total rent will be ${totalRent} of ${days} days. Do you want to submit request?`
+      );
+      if (confirm) {
+        const response = await addVehicleRentRequest(vehicleRentRequest);
+        if (response) {
+          toast.success("Your request send to Admin Successfully");
+          window.location.href = "/";
+        }
       }
     } catch (error) {
       if (error.response && error.response.status === 400)
@@ -61,12 +101,12 @@ class VehicleRentRequestForm extends Component {
     }
   };
   render() {
-    const { account, errors } = this.state;
+    const { account, errors, vehicleImage, vehicle } = this.state;
     return (
       <React.Fragment>
-        <div className="container">
+        <div className="container-fluid">
           <div className="row">
-            <div className="col-sm-10">
+            <div className="col-sm-6">
               <form
                 onSubmit={this.handleSubmit}
                 className="card"
@@ -76,7 +116,7 @@ class VehicleRentRequestForm extends Component {
                   padding: "10px"
                 }}
               >
-                <h1
+                <h4
                   style={{
                     fontFamily: "Arial, Helvetica, sans-serif",
                     marginLeft: "170px",
@@ -84,7 +124,7 @@ class VehicleRentRequestForm extends Component {
                   }}
                 >
                   Vehicle Rent Request Form
-                </h1>
+                </h4>
                 <div className="form-group">
                   <Input
                     label="Duration"
@@ -136,6 +176,24 @@ class VehicleRentRequestForm extends Component {
                   </button>
                 </div>
               </form>
+            </div>
+            <div className="col-sm-6">
+              <center>
+                <img
+                  className="rounded"
+                  src={vehicleImage}
+                  alt="xyz"
+                  style={{
+                    width: "500px",
+                    height: "450px"
+                  }}
+                />
+                <h4 style={{ marginLeft: "12px" }}>
+                  {vehicle.vehicleName}
+                  {"  "}
+                  {vehicle.vehicleModel}
+                </h4>
+              </center>
             </div>
           </div>
         </div>

@@ -26,7 +26,7 @@ class UploadFiles extends Component {
     const data = new FormData();
 
     // data.append("file", this.state.selectedFile);
-    for (var x = 0; x < this.state.selectedFile.length; x++) {
+    for (let x = 0; x < this.state.selectedFile.length; x++) {
       data.append("file", this.state.selectedFile[x]);
     }
     try {
@@ -43,7 +43,7 @@ class UploadFiles extends Component {
           }
         }
       );
-      console.log(result.data);
+      // console.log(result.data);
       // setTimeout(() => {}, 3000);
       this.props.onImageStatus(result.data);
     } catch (error) {
@@ -102,7 +102,7 @@ class UploadFiles extends Component {
     const size = this.props.fileSize * 1048576; //number of bytes
     let err = "";
     for (var x = 0; x < files.length; x++) {
-      console.log(`files[x].size:${files[x].size}  size:${size}`);
+      // console.log(`files[x].size:${files[x].size}  size:${size}`);
       if (files[x].size > size) {
         err += files[x].type + "is too large, please pick a smaller file\n";
       }

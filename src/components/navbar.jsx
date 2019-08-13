@@ -73,6 +73,18 @@ class Navbar extends Component {
                 <NavLink
                   style={{ color: "white" }}
                   className="nav-link"
+                  to="/shops"
+                >
+                  <i className="fa fa-home" aria-hidden="true">
+                    {" "}
+                    <b>Shops</b>
+                  </i>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  style={{ color: "white" }}
+                  className="nav-link"
                   to="/tools"
                 >
                   <i className="fa fa-wrench" aria-hidden="true">
@@ -149,7 +161,7 @@ class Navbar extends Component {
                   <li className="nav-item">
                     <NavLink
                       className="nav-link"
-                      to="/log-in"
+                      to="#"
                       data-toggle="modal"
                       data-target="#login"
                       data-whatever="@mdo"

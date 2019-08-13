@@ -141,6 +141,10 @@ class Login extends Component {
                   </div>
                   <center>
                     {" "}
+                    <b style={{ color: "white" }} href="">
+                      {" "}
+                      Do you have Account?
+                    </b>
                     <Link
                       type="rest"
                       data-dismiss="modal"

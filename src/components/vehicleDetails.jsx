@@ -4,7 +4,13 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import authService from "./services/authService";
 class VehicleDetials extends Component {
-  state = { vehicle: {}, vehicleImage: "", admin: false };
+  state = {
+    vehicle: {},
+    vehicleImage: "",
+    vehicleImages: [],
+    admin: false,
+    user: {}
+  };
   async componentDidMount() {
     // // const { handle } = this.props.match.params;
     // const { vehicle } = this.props.location.state;
@@ -13,20 +19,27 @@ class VehicleDetials extends Component {
 
     try {
       const { vehicleId, admin } = this.props.location.state;
-      console.log("Admin", admin);
+      const user = authService.getCurrentUser();
       const { data: vehicle } = await getVehicle(vehicleId);
       if (vehicle) {
         const vehicleImage = vehicle.vehicleImages[0];
-        this.setState({ vehicle, vehicleImage, admin });
-        console.log(vehicle.vehicleName);
+        this.setState({
+          vehicle,
+          vehicleImage,
+          admin,
+          user,
+          vehicleImages: vehicle.vehicleImages
+        });
       }
     } catch (error) {
       toast.error("" + error);
     }
   }
+  handleImage = image => {
+    this.setState({ vehicleImage: image });
+  };
   render() {
-    const user = authService.getCurrentUser();
-    const { vehicle, vehicleImage, admin } = this.state;
+    const { vehicle, vehicleImage, vehicleImages, admin, user } = this.state;
     return (
       <React.Fragment>
         {vehicle && (
@@ -99,11 +112,15 @@ class VehicleDetials extends Component {
                   //   Book Now
                   // </button>
                   <Link
-                    to={
-                      user && user.accountType === "renter"
-                        ? "/vehicleRentRequestForm"
-                        : "/registerUser"
-                    }
+                    to={{
+                      pathname:
+                        user && user.accountType === "renter"
+                          ? "/vehicleRentRequestForm"
+                          : "/registerUser",
+                      state: {
+                        vehicle: vehicle
+                      }
+                    }}
                   >
                     {" "}
                     <button
@@ -127,8 +144,20 @@ class VehicleDetials extends Component {
               >
                 <img
                   src={vehicleImage}
-                  style={{ height: "350px", width: "450px" }}
+                  style={{ height: "400px", width: "550px" }}
                 />
+                <br />
+                <br />
+                {vehicle &&
+                  vehicleImages.map(image => (
+                    <img
+                      src={image}
+                      style={{ height: "50px", width: "50px", margin: "8px" }}
+                      onClick={() => {
+                        this.handleImage(image);
+                      }}
+                    />
+                  ))}
               </div>
             </div>
           </div>

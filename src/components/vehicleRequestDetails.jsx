@@ -10,6 +10,7 @@ import Input from "./common/input";
 import Select from "./common/select";
 import TextArea from "./common/textArea";
 import { addOwnerVehicle } from "./services/registeredProductsService";
+import { Link } from "react-router-dom";
 class VehicleRequestDetails extends Component {
   state = {
     account: {
@@ -20,7 +21,8 @@ class VehicleRequestDetails extends Component {
     errors: [],
     vehicleRequest: {},
     requester: {},
-    vehicleImage: ""
+    vehicleImage: "",
+    vehicleImages: []
   };
   schema = {
     receipent: Joi.string()
@@ -47,17 +49,14 @@ class VehicleRequestDetails extends Component {
     // const { handle } = this.props.match.params;
     const { vehicleRequest } = this.props.location.state;
     const requester = vehicleRequest.requester;
-    console.log("images", vehicleRequest.vehicleImages[0]);
     const vehicleImage = vehicleRequest.vehicleImages[0];
-    this.setState({ vehicleRequest, requester, vehicleImage });
+    const vehicleImages = vehicleRequest.vehicleImages;
+    this.setState({ vehicleRequest, requester, vehicleImage, vehicleImages });
     const account = { ...this.state.account };
     account.receipent = requester.email;
     this.setState({ account });
   }
-  // handleApproved = async id => {};
-  // handleNotApproved = () => {
-  //   toast.error("Not -approved");
-  // };
+
   handleChange = e => {
     const { currentTarget: input } = e;
     const account = { ...this.state.account };
@@ -70,13 +69,25 @@ class VehicleRequestDetails extends Component {
     this.setState({ errors: errors || {} });
     console.log("errors", errors);
     if (errors) return;
-    const { account, vehicleRequest, requester } = this.state;
-    const subject = account.subject;
-    if (subject === "Your Request Approved") {
+    const isConfirm = window.confirm("Do you Want to send Email?");
+    if (isConfirm) {
       try {
-        const response1 = await updateVehicleRequest(vehicleRequest._id);
+        const emailData = this.state.account;
+        const { data: result } = await sendEmail(emailData);
+        if (result) toast.success("Email send successfuly");
+      } catch (error) {
+        toast.error(error + "");
+      }
+    }
+  };
+  handleApprovedRequest = async (requestId, requesterID) => {
+    const isConfirm = window.confirm("Do you Want to Approved Request?");
+    if (isConfirm) {
+      const { vehicleRequest } = this.state;
+      try {
+        const { data: response1 } = await updateVehicleRequest(requestId);
         if (response1) {
-          toast.success("approved Successfully" + vehicleRequest._id);
+          toast.success("Request Approved Sucessfully");
           const {
             vehicleName,
             vehicleModel,
@@ -105,17 +116,20 @@ class VehicleRequestDetails extends Component {
           };
           const response2 = await addVehicle(vehicle);
           if (response2) {
-            toast.success("vehicle Add Successfully");
+            toast.success("vehicle Add into Vehicles Successfully");
             const { data: vehicleId } = response2;
-            const response3 = await addOwnerVehicle(requester._id, vehicleId);
+            const { data: response3 } = await addOwnerVehicle(
+              requesterID,
+              vehicleId
+            );
             if (response3) {
-              toast.success("vechile add into owner successfully");
-              const emailData = account;
-              const reponse4 = await sendEmail(emailData);
-              if (reponse4) {
-                toast.success("Approved Email Send Successfully");
+              toast.success(
+                "vechile add into owner registeredProducts successfully"
+              );
+
+              setTimeout(() => {
                 this.props.history.replace("/vehicleRequests");
-              }
+              }, 1500);
             }
           }
         }
@@ -123,24 +137,16 @@ class VehicleRequestDetails extends Component {
         toast.error(error + "");
       }
     }
-    if (subject === "Your Request Not-Approved!") {
-      try {
-        const emailData = account;
-        const reponse3 = await sendEmail(emailData);
-        if (reponse3) {
-          toast.success("Not-Approved! Email Send Successfully");
-          this.props.history.replace("/vehicleRequests");
-        }
-      } catch (error) {
-        toast.error(error + "");
-      }
-    }
+  };
+  handleImage = image => {
+    this.setState({ vehicleImage: image });
   };
   render() {
     const {
       vehicleRequest,
       requester,
       vehicleImage,
+      vehicleImages,
       account,
       errors
     } = this.state;
@@ -148,47 +154,6 @@ class VehicleRequestDetails extends Component {
     return (
       <React.Fragment>
         <div className="container">
-          <div
-            className="row"
-            style={{ padding: "6px", border: "1px solid black" }}
-          >
-            <div className="col-md-6">
-              <table className="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>RequesterName</th>
-                    <td>{requester.fullName}</td>
-                  </tr>
-                  <tr>
-                    <th>Email</th>
-                    <td>{requester.email}</td>
-                  </tr>
-                  <tr>
-                    <th>Phone-No</th>
-                    <td>{requester.phoneNo}</td>
-                  </tr>
-                  <tr>
-                    <th>CNIC-No</th>
-                    <td>{requester.cnicNo}</td>
-                  </tr>
-                  <tr>
-                    <th>Address</th>
-                    <td>{requester.address}</td>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-            <div className="col-md-4">
-              <img
-                src={requester.userImage}
-                alt="xyx"
-                style={{
-                  height: "200px",
-                  width: "300px"
-                }}
-              />
-            </div>
-          </div>
           <div
             className="row"
             style={{ padding: "4px", border: "1px solid black" }}
@@ -201,6 +166,21 @@ class VehicleRequestDetails extends Component {
               <br />
               <table className="table table-bordered">
                 <thead>
+                  <tr>
+                    <th>Requster Name</th>
+                    <td>
+                      <Link
+                        to={{
+                          pathname: "/productOwnerDetails",
+                          state: {
+                            productOwnerId: requester._id
+                          }
+                        }}
+                      >
+                        {requester.fullName}
+                      </Link>
+                    </td>
+                  </tr>
                   <tr>
                     <th>VehicleName</th>
                     <td>{vehicleRequest.vehicleName}</td>
@@ -243,8 +223,22 @@ class VehicleRequestDetails extends Component {
                   </tr>
                 </thead>
               </table>
-
-              <form onSubmit={this.handleSubmit} style={{ padding: "4px" }}>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  this.handleApprovedRequest(vehicleRequest._id, requester._id);
+                }}
+              >
+                Approved Request
+              </button>
+              <form
+                onSubmit={this.handleSubmit}
+                style={{
+                  padding: "4px",
+                  backgroundColor: "#E6F2F3",
+                  marginTop: "10px"
+                }}
+              >
                 <Input
                   label="Email Address"
                   name="receipent"
@@ -278,14 +272,7 @@ class VehicleRequestDetails extends Component {
                   placeholder="Email Message..."
                   color="black"
                 />
-                <button
-                  type="submit"
-                  className="btn btn-success btn-block"
-                  // onClick={() => {
-                  //   this.handleApproved(vehicleRequest._id);
-                  // }}
-                  // disabled={account.emailMessage ? false : true}
-                >
+                <button type="submit" className="btn btn-success btn-block">
                   Send
                 </button>
               </form>
@@ -294,8 +281,18 @@ class VehicleRequestDetails extends Component {
             <div className="col-md-4" style={{ marginTop: "65px" }}>
               <img
                 src={vehicleImage}
-                style={{ height: "300px", width: "300px" }}
+                style={{ height: "420px", width: "510px" }}
               />
+              {vehicleRequest &&
+                vehicleImages.map(image => (
+                  <img
+                    src={image}
+                    style={{ height: "50px", width: "50px", margin: "8px" }}
+                    onClick={() => {
+                      this.handleImage(image);
+                    }}
+                  />
+                ))}
             </div>
           </div>
         </div>

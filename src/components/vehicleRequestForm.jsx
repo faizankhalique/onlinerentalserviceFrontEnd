@@ -92,7 +92,7 @@ class VehicleRequestForm extends Component {
       console.log(vehicleRequest);
       const response = await addVehicleRequest(vehicleRequest);
       if (response) {
-        toast.success("Your send to Admin Successfully");
+        toast.success("Your Request send to Admin Successfully");
         window.location.href = "/vehicleRequestForm";
       }
     } catch (error) {
@@ -216,8 +216,8 @@ class VehicleRequestForm extends Component {
                     errors={errors.vehicleRent}
                   />
                   <UploadFiles
-                    filesLength={1}
-                    fileSize={2.5}
+                    filesLength={2}
+                    fileSize={8.5}
                     filesType={[
                       "image/png",
                       "image/jpeg",

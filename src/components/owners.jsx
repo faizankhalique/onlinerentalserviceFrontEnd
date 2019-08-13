@@ -40,7 +40,18 @@ class Owners extends Component {
                 <tbody>
                   {ownersDetails.map(onwerData => (
                     <tr key={onwerData._id}>
-                      <td>{onwerData.owner.fullName}</td>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/productOwnerDetails",
+                            state: {
+                              productOwnerId: onwerData.owner._id
+                            }
+                          }}
+                        >
+                          {onwerData.owner.fullName}
+                        </Link>
+                      </td>
                       <td>{onwerData.owner.email}</td>
                       <td>{onwerData.owner.cnicNo}</td>
                       <td>{onwerData.owner.phoneNo}</td>
@@ -74,14 +85,82 @@ class Owners extends Component {
                                   }
                                 }}
                               >
-                                {vehicle.vehicleName}
+                                {`${vehicle.vehicleName}  ${vehicle.vehicleNo}`}
                               </Link>
                             ))}
                           </div>
                         </div>
                       </td>
-                      <td>-</td>
-                      <td>-</td>
+                      <td>
+                        <div className="dropdown">
+                          <Link
+                            className="btn btn-primary btn-sm dropdown-toggle"
+                            to="#"
+                            role="button"
+                            id="dropdownMenuLink"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            Houses
+                          </Link>
+
+                          <div
+                            className="dropdown-menu"
+                            aria-labelledby="dropdownMenuLink"
+                          >
+                            {onwerData.houses.map(house => (
+                              <Link
+                                className="dropdown-item"
+                                to={{
+                                  pathname: "/houseDetails",
+                                  state: {
+                                    houseId: house._id,
+                                    admin: true
+                                  }
+                                }}
+                              >
+                                {`${house.city} ${house.location}`}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="dropdown">
+                          <Link
+                            className="btn btn-primary btn-sm dropdown-toggle"
+                            to="#"
+                            role="button"
+                            id="dropdownMenuLink"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            Shops
+                          </Link>
+
+                          <div
+                            className="dropdown-menu"
+                            aria-labelledby="dropdownMenuLink"
+                          >
+                            {onwerData.shops.map(shop => (
+                              <Link
+                                className="dropdown-item"
+                                to={{
+                                  pathname: "/shopDetails",
+                                  state: {
+                                    shopId: shop._id,
+                                    admin: true
+                                  }
+                                }}
+                              >
+                                {`${shop.city} ${shop.location}`}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </td>
                       <td>-</td>
                     </tr>
                   ))}

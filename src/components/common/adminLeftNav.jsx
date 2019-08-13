@@ -27,7 +27,7 @@ class AdminLeftNav extends Component {
             >
               <i className="fa fa-envelope" aria-hidden="true">
                 {" "}
-                Requests
+                ProductRequests
               </i>
             </NavLink>
             <div
@@ -38,10 +38,47 @@ class AdminLeftNav extends Component {
               <NavLink className="dropdown-item" to="/vehicleRequests">
                 Vehicles
               </NavLink>
-              <NavLink className="dropdown-item" to="#">
+              <NavLink className="dropdown-item" to="/houseRequests">
                 Houses
               </NavLink>
-              <NavLink className="dropdown-item" to="#">
+              <NavLink className="dropdown-item" to="/shopRequests">
+                shops
+              </NavLink>
+              <NavLink className="dropdown-item" to="/toolRequests">
+                Tools
+              </NavLink>
+            </div>
+          </li>
+          <li className="nav-item dropdown">
+            <NavLink
+              className="nav-link dropdown-toggle"
+              to="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i className="fa fa-envelope" aria-hidden="true">
+                {" "}
+                RentRequests
+              </i>
+            </NavLink>
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
+              <NavLink className="dropdown-item" to="/vehicleRentRequests">
+                Vehicles
+              </NavLink>
+              <NavLink className="dropdown-item" to="/houseRentRequests">
+                Houses
+              </NavLink>
+              <NavLink className="dropdown-item" to="/shopRentRequests">
+                Shops
+              </NavLink>
+              <NavLink className="dropdown-item" to="/toolRentRequests">
                 Tools
               </NavLink>
             </div>
@@ -67,21 +104,35 @@ class AdminLeftNav extends Component {
               aria-labelledby="navbarDropdown"
             >
               <NavLink className="dropdown-item" to="/owners">
-                All
-              </NavLink>
-              <NavLink className="dropdown-item" to="#">
-                Vehicles
-              </NavLink>
-              <NavLink className="dropdown-item" to="#">
-                Houses
-              </NavLink>
-              <div className="dropdown-divider" />
-              <NavLink className="dropdown-item" to="#">
-                Tools
+                All Owners
               </NavLink>
             </div>
           </li>
-
+          <li className="nav-item dropdown">
+            <NavLink
+              className="nav-link dropdown-toggle"
+              to="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i className="fa fa-arrow-circle-right" aria-hidden="true">
+                {" "}
+                Renters
+              </i>
+            </NavLink>
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
+              <NavLink className="dropdown-item" to="/renters">
+                All Renters
+              </NavLink>
+            </div>
+          </li>
           <li className="nav-item dropdown">
             <NavLink
               className="nav-link dropdown-toggle"
@@ -94,7 +145,7 @@ class AdminLeftNav extends Component {
             >
               <i className="fa fa-bus" aria-hidden="true">
                 {" "}
-                Renters
+                Renters Bookings
               </i>
             </NavLink>
             <div
@@ -102,15 +153,17 @@ class AdminLeftNav extends Component {
               className="dropdown-menu"
               aria-labelledby="navbarDropdown"
             >
-              <NavLink className="dropdown-item" to="#">
-                Action
+              <NavLink className="dropdown-item" to="/vehiclesBookings">
+                Vehicles Booking
               </NavLink>
-              <NavLink className="dropdown-item" to="#">
-                Another action
+              <NavLink className="dropdown-item" to="/housesBookings">
+                Houses Booking
               </NavLink>
-              <div className="dropdown-divider" />
-              <NavLink className="dropdown-item" to="#">
-                Something else here
+              <NavLink className="dropdown-item" to="/shopsBookings">
+                Shops Booking
+              </NavLink>
+              <NavLink className="dropdown-item" to="/toolsBookings">
+                Tools Booking
               </NavLink>
             </div>
           </li>

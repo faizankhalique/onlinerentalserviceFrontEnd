@@ -10,6 +10,9 @@ export async function addVehicleRequest(VehicleRequest) {
   VehicleRequest.requester = user._id;
   return await http.post(apiEndPoint, VehicleRequest);
 }
+export async function getOwnerVehiclesRequests(id) {
+  return http.get(apiEndPoint + "/ownerequests/" + id);
+}
 export async function updateVehicleRequest(id) {
   return await http.put(apiEndPoint + id.trim());
 }

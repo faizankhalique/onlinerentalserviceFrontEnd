@@ -4,8 +4,6 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { getVehicles } from "./services/vehicleService";
 import authService from "./services/authService";
-// import UploadFiles from "./common/uploadFiles";
-// import { async } from './services/registeredProductsService';
 class Home extends Component {
   state = { vehicles: [] };
   async componentDidMount() {
@@ -13,27 +11,11 @@ class Home extends Component {
       const { data: vehicles } = await getVehicles();
       if (vehicles) {
         this.setState({ vehicles });
-        console.log("vehicles", vehicles);
       }
     } catch (error) {
       toast.error("" + error);
     }
   }
-
-  // async componentDidMount() {
-  //   try {
-  //     const response = await http.get(
-  //       "http://localhost:8000/api/vehicles/vehiclesimages"
-  //     );
-  //     if (response && response.data) {
-  //       const { data: vehiclesImages } = response;
-
-  //       this.setState({ vehiclesImages });
-  //     }
-  //   } catch (error) {
-  //     toast.error("" + error);
-  //   }
-  // }
 
   render() {
     const { vehicles } = this.state;
@@ -72,11 +54,15 @@ class Home extends Component {
                 </button>
               </Link>
               <Link
-                to={
-                  user && user.accountType === "renter"
-                    ? "/vehicleRentRequestForm"
-                    : "/registerUser"
-                }
+                to={{
+                  pathname:
+                    user && user.accountType === "renter"
+                      ? "/vehicleRentRequestForm"
+                      : "/registerUser",
+                  state: {
+                    vehicle: vehicle
+                  }
+                }}
               >
                 {" "}
                 <button
