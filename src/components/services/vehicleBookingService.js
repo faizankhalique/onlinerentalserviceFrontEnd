@@ -10,3 +10,6 @@ export async function getRenterVehiclesBookings(id) {
 export async function updateVehiclesBookings(id, vehicleBookingData) {
   return http.put(apiEndPoint + id, vehicleBookingData);
 }
+export async function getVehicleBooking(id) {
+  return http.get(apiEndPoint + "vehiclebooking/" + id);
+}

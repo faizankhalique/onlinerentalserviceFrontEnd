@@ -26,8 +26,6 @@ class RenterShopsBookings extends Component {
                     <th scope="col">HouseLocation</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Security</th>
-                    <th scope="col">Rent</th>
                     <th scope="col">Confirmation</th>
                   </tr>
                 </thead>
@@ -41,8 +39,7 @@ class RenterShopsBookings extends Component {
                           {shopBooking.shop.location}
                         </td>
                         <td>{shopBooking.startDate}</td>
-                        <td>{shopBooking.endDate}</td>
-                        <td>{shopBooking.security}</td>
+
                         <td>{shopBooking.rent}</td>
                         <td>{shopBooking.bookingConfirmation}</td>
                       </tr>

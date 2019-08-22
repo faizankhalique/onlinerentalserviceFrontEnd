@@ -14,25 +14,26 @@ class ConfirmBooking extends Component {
       endDate: "",
       rent: "",
       security: "",
-      startTime: "",
-      endTime: ""
+      commission: ""
     },
     errors: [],
     bookingId: "",
     renterId: "",
-    vehicleRent: ""
+    totalDays: "",
+
+    vehicleRent: "",
+    vehiclesBooking: {}
   };
   schema = {
     renterName: Joi.string().required(),
     vehicleName: Joi.string().required(),
     startDate: Joi.string().required(),
     endDate: Joi.string().required(),
-    rent: Joi.number().min(1),
+    rent: Joi.number().min(0),
     security: Joi.number()
-      .min(1)
+      .min(0)
       .required(),
-    startTime: Joi.string().required(),
-    endTime: Joi.string().required()
+    commission: Joi.number().min(0)
   };
   componentDidMount() {
     const { vehiclesBooking } = this.props.location.state;
@@ -42,13 +43,20 @@ class ConfirmBooking extends Component {
       (account.startDate = vehiclesBooking.startDate);
     account.endDate = vehiclesBooking.endDate;
     account.security = vehiclesBooking.security;
-    account.rent = vehiclesBooking.rent;
+    account.commission = vehiclesBooking.commission;
+
     this.setState({
       account,
       bookingId: vehiclesBooking._id,
       renterId: vehiclesBooking.renter._id,
-      vehicleRent: vehiclesBooking.vehicle.vehicleRent
+      vehicleRent: vehiclesBooking.vehicle.vehicleRent,
+      vehiclesBooking
     });
+    this.calculateRent(
+      account.endDate,
+      account.startDate,
+      vehiclesBooking.vehicle.vehicleRent
+    );
   }
   validate = () => {
     const options = { abortEarly: false };
@@ -66,6 +74,31 @@ class ConfirmBooking extends Component {
     account[input.name] = input.value;
     this.setState({ account });
   };
+
+  calculateRent = (EndDate, StartDate, vehicleRent) => {
+    const endDate = new Date(EndDate + ",00:00");
+    const startDate = new Date(StartDate + ",00:00");
+    if (endDate > startDate) {
+      const totalDays = diff_days(endDate, startDate) + 1;
+      const totalRent = totalDays * vehicleRent;
+      const commission = parseInt(totalRent * 0.2);
+      const account = this.state.account;
+      account.rent = totalRent;
+      account.commission = commission;
+      this.setState({ account, totalDays: totalDays });
+    } else {
+      const totalDays = 1;
+      const totalRent = totalDays * vehicleRent;
+      const commission = parseInt(totalRent * 0.2);
+      const account = this.state.account;
+      account.rent = totalRent;
+      account.commission = commission;
+      this.setState({
+        totalDays,
+        account
+      });
+    }
+  };
   handleSubmit = async e => {
     e.preventDefault();
     const errors = this.validate();
@@ -74,32 +107,27 @@ class ConfirmBooking extends Component {
     if (errors) return;
 
     const { account, vehicleRent } = this.state;
-    const date1 = new Date(account.startDate + "," + account.startTime);
-    const date2 = new Date(account.endDate + "," + account.endTime);
-    if (date2 > date1) {
-      const totalRent =
-        parseInt(diff_days(date2, date1)) * parseInt(vehicleRent);
-      account.rent = totalRent;
-      this.setState({ account });
-    } else if (date1 > date2) {
+    const startDate = new Date(account.startDate + ",00:00");
+    const endDate = new Date(account.endDate + ",00:00");
+    if (endDate < startDate) {
       toast.error("endDate must be greater than  startdate.");
       return;
-    } else {
-      const totalRent = 1 * parseInt(vehicleRent);
-      account.rent = totalRent;
-      this.setState({ account });
-      // alert("Dates are equal.");
     }
 
+    this.calculateRent(account.endDate, account.startDate, vehicleRent);
+    const totalDays = diff_days(endDate, startDate) + 1;
+    const { account: bookingData, bookingId, renterId } = this.state;
     try {
-      const { account: vehicleBookingData, bookingId, renterId } = this.state;
       const confirm = window.confirm(
-        `Your Total Rent is ${vehicleBookingData.rent} Do you want to submit?`
+        `Total Days :${totalDays}
+         Total Rent :${bookingData.rent}
+         Commission :${bookingData.commission}
+         Do you want to submit?`
       );
       if (confirm) {
         const { data: result } = await updateVehiclesBookings(
           bookingId,
-          vehicleBookingData
+          bookingData
         );
         if (result) {
           toast.success("Booking Confirm Successfully");
@@ -115,11 +143,54 @@ class ConfirmBooking extends Component {
       toast.error(error + "");
     }
   };
+
   render() {
-    const { account, errors } = this.state;
+    const { account, errors, totalDays, vehicleRent } = this.state;
     return (
       <React.Fragment>
-        <div className="container">
+        <div className="container" style={{ background: "#E6F2F3" }}>
+          <div className="row">
+            <div
+              className="col-sm-2"
+              style={{
+                background: "white",
+                height: "120px",
+                margin: "20px 0px 15px 85px"
+              }}
+            >
+              <b> Total Days:{totalDays}</b>
+            </div>
+            <div
+              className="col-sm-2"
+              style={{
+                background: "white",
+                height: "120px",
+                margin: "20px 0px 15px 50px"
+              }}
+            >
+              <b> Rent Per Day:{vehicleRent}</b>
+            </div>
+            <div
+              className="col-sm-2"
+              style={{
+                background: "white",
+                height: "120px",
+                margin: "20px 0px 15px 50px"
+              }}
+            >
+              <b>Total Rent:{account.rent}</b>
+            </div>
+            <div
+              className="col-sm-2"
+              style={{
+                background: "white",
+                height: "120px",
+                margin: "20px 0px 15px 50px"
+              }}
+            >
+              <b>Commission:{account.commission}</b>
+            </div>
+          </div>
           <div className="row">
             <div className="col-sm-12 " style={{ marginLeft: "65px" }}>
               <form
@@ -160,7 +231,7 @@ class ConfirmBooking extends Component {
                     errors={errors.vehicleName}
                   />
                   <Input
-                    label="StatDate"
+                    label="StartDate"
                     name="startDate"
                     type="date"
                     value={account.startDate}
@@ -175,22 +246,7 @@ class ConfirmBooking extends Component {
                     onChange={this.handleChange}
                     errors={errors.endDate}
                   />
-                  <Input
-                    label="StatTime"
-                    name="startTime"
-                    type="time"
-                    value={account.startTime}
-                    onChange={this.handleChange}
-                    errors={errors.startTime}
-                  />
-                  <Input
-                    label="endTime"
-                    name="endTime"
-                    type="time"
-                    value={account.endTime}
-                    onChange={this.handleChange}
-                    errors={errors.endTime}
-                  />
+
                   <Input
                     label="Security"
                     name="security"

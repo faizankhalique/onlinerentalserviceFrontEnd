@@ -38,7 +38,6 @@ import OwnerVehicles from "./components/ownerVehicles";
 import RenterVehicleRequestsHistory from "./components/renterVehiclesRequestsHistory";
 import RenterVehiclesBookings from "./components/renterVehicleBookings";
 import HouseRequestForm from "./components/properties/house/houseRequestForm";
-import "./App.css";
 import HouseRequests from "./components/properties/house/houseRequests";
 import HouseRequestDetails from "./components/properties/house/houseRequestDetails";
 import HouseDetails from "./components/properties/house/houseDetails";
@@ -65,7 +64,35 @@ import RenterHouseRequestsHistory from "./components/properties/house/renterHous
 import RenterShopRequestsHistory from "./components/properties/shop/renterShopsRequestsHistory";
 import RenterHouesBookings from "./components/properties/house/renterHouseBooking";
 import RenterShopsBookings from "./components/properties/shop/renterShopBookings";
+import ToolRequestForm from "./components/tools/toolRequestForm";
+import ToolRequests from "./components/tools/toolRequests";
+import ToolRequestDetails from "./components/tools/toolRequestDetails";
+import Tools from "./components/tools/tools";
+import ToolDetails from "./components/tools/toolDetails";
+import OwnerToolRequestsHistory from "./components/tools/ownerToolRequestsHistory";
+import OwnerTools from "./components/tools/ownerTools";
+import ToolRentRequestForm from "./components/tools/toolRentRequestForm";
+import ToolRentRequests from "./components/tools/toolRentRequests";
+import ToolRentRequestDetails from "./components/tools/toolRentRequestDetails";
+import ToolBookings from "./components/tools/toolsBookings";
+import ConfirmToolBooking from "./components/tools/confirmToolBooking";
+import RenterToolRequestsHistory from "./components/tools/renterToolsRequestsHistory";
+import RenterToolsBookings from "./components/tools/renterToolBookings";
+import HousePayments from "./components/properties/house/housePayments";
+import ShopPayments from "./components/properties/shop/shopPayments";
+import VehicleBookingDetails from "./components/vehicleBookingDetails";
+import HouseBookingDetails from "./components/properties/house/houseBookingDetails";
+import ShopBookingDetails from "./components/properties/shop/shopBookingDetails";
+import ToolBookingDetails from "./components/tools/toolBookingDetails";
+import ContactUs from "./components/contactUs";
 
+import "./App.css";
+import Graph from "./components/graph";
+import Report from "./components/report";
+import OwnerAllVehiclesDetails from "./components/ownerAllVehiclesDetails";
+import OwnerAllHousesDetails from "./components/properties/house/ownerAllHousesDetails";
+import OwnerAllShopsDetails from "./components/properties/shop/ownerAllShopsDetails";
+import OwnerAllToolsDetails from "./components/tools/ownerAllToolsDetails";
 class App extends Component {
   render() {
     const user = authService.getCurrentUser();
@@ -87,6 +114,8 @@ class App extends Component {
                 <Route path="/vehicleDetails" component={VehicleDetials} />
                 <Route path="/houseDetails" component={HouseDetails} />
                 <Route path="/shopDetails" component={ShopDetails} />
+                <Route path="/toolDetails" component={ToolDetails} />
+
                 <Route
                   path="/vehicleRentRequestForm"
                   component={VehicleRentRequestForm}
@@ -99,10 +128,15 @@ class App extends Component {
                   path="/shopRentRequestForm"
                   component={ShopRentRequestForm}
                 />
+                <Route
+                  path="/toolRentRequestForm"
+                  component={ToolRentRequestForm}
+                />
                 <Route path="/vehicles" component={Vehicle} />
                 <Route path="/houses" component={House} />
                 <Route path="/shops" component={Shops} />
-                <Route path="/tools" component={Tool} />
+                <Route path="/tools" component={Tools} />
+                <Route path="/contactUs" component={ContactUs} />
                 <Route path="/registerUser" component={RegisterUser} />
                 <Route exact path="/" component={Home} />
               </Switch>
@@ -124,6 +158,7 @@ class App extends Component {
                   width: "100%",
                   height: "10%",
                   textAlign: "center"
+                  // position: "fixed"
                 }}
               >
                 <div className="container">
@@ -145,12 +180,16 @@ class App extends Component {
             currentPath === "/vehicles" ||
             currentPath === "/houses" ||
             currentPath === "/shops" ||
+            currentPath === "/tools" ||
+            currentPath === "/contactUs" ||
             currentPath === "/vehicleDetails" ||
             currentPath === "/houseDetails" ||
             currentPath === "/shopDetails" ||
+            currentPath === "/toolDetails" ||
             currentPath === "/vehicleRentRequestForm" ||
             currentPath === "/houseRentRequestForm" ||
             currentPath === "/shopRentRequestForm" ||
+            currentPath === "/toolRentRequestForm" ||
             currentPath === "/tools") && (
             <React.Fragment>
               <Navbar />
@@ -178,13 +217,21 @@ class App extends Component {
                       component={ShopRentRequestForm}
                     />
                   )}
+                  {user.accountType === "renter" && (
+                    <Route
+                      path="/toolRentRequestForm"
+                      component={ToolRentRequestForm}
+                    />
+                  )}
                   <Route path="/vehicleDetails" component={VehicleDetials} />
                   <Route path="/vehicles" component={Vehicle} />
                   <Route path="/houses" component={House} />
                   <Route path="/houseDetails" component={HouseDetails} />
                   <Route path="/shops" component={Shops} />
                   <Route path="/shopDetails" component={ShopDetails} />
-                  <Route path="/tools" component={Tool} />
+                  <Route path="/toolDetails" component={ToolDetails} />
+                  <Route path="/tools" component={Tools} />
+                  <Route exact path="/contactUs" component={ContactUs} />
                   <Route exact path="/" component={Home} />
                 </Switch>
                 {/* <div className="container-fluid">
@@ -204,6 +251,7 @@ class App extends Component {
                     width: "100%",
                     height: "10%",
                     textAlign: "center"
+                    // position: "fixed"
                   }}
                 >
                   <div className="container">
@@ -229,6 +277,9 @@ class App extends Component {
             currentPath === "/shopRequestForm" ||
             currentPath === "/ownerShopRequestsHistory" ||
             currentPath === "/ownerShops" ||
+            currentPath === "/toolRequestForm" ||
+            currentPath === "/ownerToolRequestsHistory" ||
+            currentPath === "/ownerTools" ||
             currentPath === "/logOut") && (
             <React.Fragment>
               {/* <Navbar /> */}
@@ -267,12 +318,20 @@ class App extends Component {
                       path="/shopRequestForm"
                       component={ShopRequestForm}
                     />
-
+                    <Route
+                      path="/toolRequestForm"
+                      component={ToolRequestForm}
+                    />
                     <Route
                       path="/ownerShopRequestsHistory"
                       component={OwnerShopRequestsHistory}
                     />
                     <Route path="/ownerShops" component={OwnerShops} />
+                    <Route
+                      path="/ownerToolRequestsHistory"
+                      component={OwnerToolRequestsHistory}
+                    />
+                    <Route path="/ownerTools" component={OwnerTools} />
                     <Route path="/logOut" component={LogOut} />
                   </Switch>
                 </div>
@@ -289,6 +348,8 @@ class App extends Component {
             currentPath === "/renterHouseBookings" ||
             currentPath === "/renterShopsRequestsHistory" ||
             currentPath === "/renterShopBookings" ||
+            currentPath === "/renterToolsRequestsHistory" ||
+            currentPath === "/renterToolBookings" ||
             currentPath === "/logOut") && (
             <React.Fragment>
               {/* <Navbar /> */}
@@ -330,6 +391,14 @@ class App extends Component {
                       path="/renterShopBookings"
                       component={RenterShopsBookings}
                     />
+                    <Route
+                      path="/renterToolsRequestsHistory"
+                      component={RenterToolRequestsHistory}
+                    />
+                    <Route
+                      path="/renterToolBookings"
+                      component={RenterToolsBookings}
+                    />
                   </Switch>
                 </div>
               </div>
@@ -350,12 +419,15 @@ class App extends Component {
             currentPath === "/renterDetails" ||
             currentPath === "/vehiclesBookings" ||
             currentPath === "/confirmBooking" ||
+            currentPath === "/vehicleBookingDetails" ||
             currentPath === "/houseRequests" ||
             currentPath === "/houseRequestDetails" ||
             currentPath === "/updateHouseRequest" ||
             currentPath === "/houseRentRequests" ||
             currentPath === "/houseRentRequestDetails" ||
             currentPath === "/housesBookings" ||
+            currentPath === "/houseBookingDetails" ||
+            currentPath === "/housePayments" ||
             currentPath === "/confirmHouseBooking" ||
             currentPath === "/userProfile" ||
             currentPath === "/shopRequests" ||
@@ -364,7 +436,21 @@ class App extends Component {
             currentPath === "/shopRentRequests" ||
             currentPath === "/shopRentRequestDetails" ||
             currentPath === "/shopsBookings" ||
+            currentPath == "/shopBookingDetails" ||
             currentPath === "/confirmShopBooking" ||
+            currentPath === "/shopPayments" ||
+            currentPath === "/toolRequests" ||
+            currentPath === "/toolRequestDetails" ||
+            currentPath === "/toolRentRequests" ||
+            currentPath === "/toolRentRequestDetails" ||
+            currentPath === "/toolsBookings" ||
+            currentPath === "/toolBookingDetails" ||
+            currentPath === "/confirmToolBooking" ||
+            currentPath === "/ownerAllVehiclesDetails" ||
+            currentPath === "/ownerAllHousesDetails" ||
+            currentPath === "/ownerAllShopsDetails" ||
+            currentPath === "/ownerAllToolsDetails" ||
+            currentPath === "/reports" ||
             currentPath === "/logOut") && (
             <React.Fragment>
               {/* <Navbar /> */}
@@ -408,6 +494,10 @@ class App extends Component {
                       path="/vehiclesBookings"
                       component={VehiclesBookoings}
                     />
+                    <Route
+                      path="/vehicleBookingDetails"
+                      component={VehicleBookingDetails}
+                    />
                     <Route path="/confirmBooking" component={ConfirmBooking} />
                     <Route path="/houseRequests" component={HouseRequests} />
                     <Route
@@ -424,9 +514,14 @@ class App extends Component {
                     />
                     <Route path="/housesBookings" component={HouseBookings} />
                     <Route
+                      path="/houseBookingDetails"
+                      component={HouseBookingDetails}
+                    />
+                    <Route
                       path="/confirmHouseBooking"
                       component={ConfirmHouseBooking}
                     />
+                    <Route path="/housePayments" component={HousePayments} />
                     <Route path="/shopRequests" component={ShopRequests} />
                     <Route
                       path="/shopRequestDetails"
@@ -450,12 +545,56 @@ class App extends Component {
                     />
                     <Route path="/shopsBookings" component={ShopBookings} />
                     <Route
+                      path="/shopBookingDetails"
+                      component={ShopBookingDetails}
+                    />
+                    <Route
                       path="/confirmShopBooking"
                       component={ConfirmShopBooking}
+                    />
+                    <Route path="/shopPayments" component={ShopPayments} />
+                    <Route path="/toolRequests" component={ToolRequests} />
+                    <Route
+                      path="/toolRequestDetails"
+                      component={ToolRequestDetails}
+                    />
+                    <Route
+                      path="/toolRentRequests"
+                      component={ToolRentRequests}
+                    />
+                    <Route
+                      path="/toolRentRequestDetails"
+                      component={ToolRentRequestDetails}
+                    />
+                    <Route path="/toolsBookings" component={ToolBookings} />
+                    <Route
+                      path="/toolBookingDetails"
+                      component={ToolBookingDetails}
+                    />
+                    <Route
+                      path="/confirmToolBooking"
+                      component={ConfirmToolBooking}
+                    />
+                    <Route
+                      path="/ownerAllVehiclesDetails"
+                      component={OwnerAllVehiclesDetails}
+                    />
+                    <Route
+                      path="/ownerAllHousesDetails"
+                      component={OwnerAllHousesDetails}
+                    />
+                    <Route
+                      path="/ownerAllShopsDetails"
+                      component={OwnerAllShopsDetails}
+                    />
+                    <Route
+                      path="/ownerAllToolsDetails"
+                      component={OwnerAllToolsDetails}
                     />
                     <Route path="/userProfile" component={UserProfile} />
                     <Route path="/owners" component={Owners} />
                     <Route path="/renters" component={Renters} />
+                    <Route path="/reports" component={Report} />
                     <Route path="/logOut" component={LogOut} />
                   </Switch>
                 </div>
@@ -470,12 +609,14 @@ class App extends Component {
           currentPath !== "/tools" &&
           currentPath !== "/houses" &&
           currentPath !== "/shops" &&
+          currentPath !== "/contactUs" &&
           currentPath !== "/vehicleRequestForm" &&
           currentPath !== "/vehicleRequestDetails" &&
           currentPath !== "/vehicleRequests" &&
           currentPath !== "/vehicleRentRequests" &&
           currentPath !== "/vehicleRentRequestDetails" &&
           currentPath !== "/vehiclesBookings" &&
+          currentPath !== "/vehicleBookingDetails" &&
           currentPath !== "/productOwnerDetails" &&
           currentPath !== "/userProfile" &&
           currentPath !== "/logOut" &&
@@ -502,7 +643,9 @@ class App extends Component {
           currentPath !== "/houseRentRequests" &&
           currentPath !== "/houseRentRequestDetails" &&
           currentPath !== "/housesBookings" &&
+          currentPath !== "/houseBookingDetails" &&
           currentPath !== "/confirmHouseBooking" &&
+          currentPath !== "/housePayments" &&
           currentPath !== "/renterHousesRequestsHistory" &&
           currentPath !== "/renterHouseBookings" &&
           currentPath !== "/shopRequestForm" &&
@@ -516,9 +659,31 @@ class App extends Component {
           currentPath !== "/shopRentRequests" &&
           currentPath !== "/shopRentRequestDetails" &&
           currentPath !== "/shopsBookings" &&
+          currentPath !== "/shopBookingDetails" &&
           currentPath !== "/confirmShopBooking" &&
           currentPath !== "/renterShopsRequestsHistory" &&
           currentPath !== "/renterShopBookings" &&
+          currentPath !== "/shopPayments" &&
+          currentPath !== "/tools" &&
+          currentPath !== "/toolDetails" &&
+          currentPath !== "/toolRequestForm" &&
+          currentPath !== "/toolRequests" &&
+          currentPath !== "/toolRequestDetails" &&
+          currentPath !== "/ownerToolRequestsHistory" &&
+          currentPath !== "/ownerTools" &&
+          currentPath !== "/toolRentRequestForm" &&
+          currentPath !== "/toolRentRequests" &&
+          currentPath !== "/toolRentRequestDetails" &&
+          currentPath !== "/toolsBookings" &&
+          currentPath !== "/toolBookingDetails" &&
+          currentPath !== "/confirmToolBooking" &&
+          currentPath !== "/renterToolsRequestsHistory" &&
+          currentPath !== "/renterToolBookings" &&
+          currentPath !== "/reports" &&
+          currentPath !== "/ownerAllVehiclesDetails" &&
+          currentPath !== "/ownerAllHousesDetails" &&
+          currentPath !== "/ownerAllToolsDetails" &&
+          currentPath !== "/ownerAllShopsDetails" &&
           currentPath !== "/vehicleRentRequestForm" && (
             <React.Fragment>
               <div

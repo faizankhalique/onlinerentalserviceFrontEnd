@@ -119,7 +119,7 @@ class UploadFiles extends Component {
   render() {
     return (
       <div className="forms-group files">
-        <label style={{ color: "#CDCDCD" }}>
+        <label style={{ color: this.props.color || "#CDCDCD" }}>
           <b>Upload Current-Image</b>
         </label>
         <input

@@ -8,58 +8,181 @@ import SearchBox from "./common/searchBox";
 class VehicleRequests extends Component {
   state = {
     vehicleRequests: [],
-    currentPage: 1,
-    pageSize: 4,
-    searchQuery: ""
+    pendingVehicleRequests: [],
+    approvedVehicleRequests: [],
+    pendingCurrentPage: 1,
+    pendingPageSize: 4,
+    pendingSearchQuery: "",
+    approvedCurrentPage: 1,
+    approvedPageSize: 4,
+    approvedSearchQuery: "",
+    pendingRequestsLength: "",
+    approvedRequestsLength: ""
   };
   async componentDidMount() {
     try {
       const reponse = await getVehiclesRequests();
       if (reponse) {
         const { data: vehicleRequests } = reponse;
-        this.setState({ vehicleRequests });
-        console.log("vehiclerequests", this.state.vehicleRequests);
+        let pendingVehicleRequests = vehicleRequests.filter(
+          vr => vr.status == "Pending"
+        );
+        let approvedVehicleRequests = vehicleRequests.filter(
+          vr => vr.status == "Approved"
+        );
+        let pendingRequestsLength = pendingVehicleRequests.length;
+        let approvedRequestsLength = approvedVehicleRequests.length;
+        this.setState({
+          vehicleRequests,
+          pendingVehicleRequests,
+          approvedVehicleRequests,
+          pendingRequestsLength,
+          approvedRequestsLength
+        });
       }
     } catch (error) {
       toast.error("" + error);
     }
   }
-  handlePageChange = page => {
-    this.setState({ currentPage: page });
+  handlePendingPageChange = page => {
+    this.setState({ pendingCurrentPage: page });
   };
-  handleSearch = query => {
-    this.setState({ searchQuery: query, currentPage: 1 });
+  handleApprovedPageChange = page => {
+    this.setState({ approvedCurrentPage: page });
   };
-  filterVehicleRequests = () => {
-    const { vehicleRequests, pageSize, currentPage, searchQuery } = this.state;
+  handlePendingSearch = query => {
+    this.setState({ pendingSearchQuery: query, pendingCurrentPage: 1 });
+  };
+  handleApprovedSearch = query => {
+    this.setState({ approvedSearchQuery: query, approvedCurrentPage: 1 });
+  };
+  filterPendingVehicleRequests = () => {
+    const {
+      pendingVehicleRequests,
+      pendingPageSize,
+      pendingCurrentPage,
+      pendingSearchQuery
+    } = this.state;
     let allRequests;
-    if (searchQuery) {
-      allRequests = vehicleRequests.filter(v =>
-        // v.ApprovedDate.toLowerCase().startsWith(searchQuery.toLowerCase())
-        v.requester.fullName.toLowerCase().startsWith(searchQuery.toLowerCase())
+    let paginatePendingVehicleRequests = [];
+    if (pendingSearchQuery) {
+      allRequests = pendingVehicleRequests.filter(v =>
+        v.requester.fullName
+          .toLowerCase()
+          .startsWith(pendingSearchQuery.toLowerCase())
       );
-      const paginateVehicleRequests = paginate(
+      paginatePendingVehicleRequests = paginate(
         allRequests,
-        currentPage,
-        pageSize
+        pendingCurrentPage,
+        pendingPageSize
       );
-      return paginateVehicleRequests;
+      return paginatePendingVehicleRequests;
     }
-    const paginateVehicleRequests = paginate(
-      vehicleRequests,
-      currentPage,
-      pageSize
+    paginatePendingVehicleRequests = paginate(
+      pendingVehicleRequests,
+      pendingCurrentPage,
+      pendingPageSize
     );
-    return paginateVehicleRequests;
+    return paginatePendingVehicleRequests;
+  };
+  filterApprovedVehicleRequests = () => {
+    const {
+      approvedVehicleRequests,
+      approvedCurrentPage,
+      approvedPageSize,
+      approvedSearchQuery
+    } = this.state;
+    let allRequests;
+    let paginateApprovedVehicleRequests = [];
+    if (approvedSearchQuery) {
+      allRequests = approvedVehicleRequests.filter(v =>
+        v.requester.fullName
+          .toLowerCase()
+          .startsWith(approvedSearchQuery.toLowerCase())
+      );
+      paginateApprovedVehicleRequests = paginate(
+        allRequests,
+        approvedCurrentPage,
+        approvedPageSize
+      );
+      return paginateApprovedVehicleRequests;
+    }
+    paginateApprovedVehicleRequests = paginate(
+      approvedVehicleRequests,
+      approvedCurrentPage,
+      approvedPageSize
+    );
+
+    return paginateApprovedVehicleRequests;
   };
   render() {
-    const { vehicleRequests, pageSize, currentPage, searchQuery } = this.state;
-    const allVehicleRequests = this.filterVehicleRequests();
+    const {
+      pendingVehicleRequests,
+      pendingCurrentPage,
+      pendingPageSize,
+      pendingSearchQuery,
+      approvedVehicleRequests,
+      approvedCurrentPage,
+      approvedPageSize,
+      approvedSearchQuery,
+      pendingRequestsLength,
+      approvedRequestsLength
+    } = this.state;
+    let allPendingVehicleRequests = this.filterPendingVehicleRequests();
+    let allApprovedVehicleRequests = this.filterApprovedVehicleRequests();
     return (
       <React.Fragment>
-        <div className="container">
+        <div className="container" style={{ background: "#E6F2F3" }}>
           <div className="row">
+            <div
+              className="col-sm-4 card"
+              style={{
+                background: "white",
+                height: "150px",
+                marginLeft: "30px",
+                marginTop: "10px"
+              }}
+            >
+              <h4 style={{ marginTop: "30px" }}>
+                {" "}
+                Pending Requests: {pendingRequestsLength}
+              </h4>
+            </div>
+            <div
+              className="col-sm-4 card"
+              style={{
+                background: "white",
+                height: "150px",
+                marginLeft: "290px",
+                marginTop: "10px"
+              }}
+            >
+              <h4 style={{ marginTop: "30px" }}>
+                {" "}
+                Approved Requests: {approvedRequestsLength}
+              </h4>
+            </div>
+          </div>
+          <div
+            className="row card"
+            style={{
+              background: "white",
+              marginTop: "30px",
+              marginLeft: "10px",
+              marginRight: "10px"
+            }}
+          >
             <div className="col-lg-12">
+              <center>
+                <h3>Pending Vehicle Requests</h3>
+              </center>
+              <div style={{ marginLeft: "820px" }}>
+                {" "}
+                <SearchBox
+                  value={pendingSearchQuery}
+                  onChange={this.handlePendingSearch}
+                />
+              </div>
               <table className="table">
                 <thead className="thead-dark">
                   <tr>
@@ -75,59 +198,78 @@ class VehicleRequests extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {vehicleRequests.map(
-                    vehicleRequest =>
-                      vehicleRequest.status == "Not-Approved" && (
-                        <tr key={vehicleRequest._id}>
-                          <Link
-                            to={{
-                              pathname: "/productOwnerDetails",
-                              state: {
-                                productOwnerId: vehicleRequest.requester._id
-                              }
-                            }}
-                          >
-                            <td>{vehicleRequest.requester.fullName}</td>
-                          </Link>
-                          <td>
-                            <Link
-                              to={{
-                                pathname: "/vehicleRequestDetails",
-                                state: {
-                                  vehicleRequest: vehicleRequest
-                                }
-                              }}
-                            >
-                              {vehicleRequest.vehicleName}
-                            </Link>
-                          </td>
-                          <td>{vehicleRequest.vehicleModel}</td>
-                          <td>{vehicleRequest.vehicleRent}</td>
-                          <td>{vehicleRequest.memberShipDuration}</td>
-                          <td>{vehicleRequest.status}</td>
-                          <td>{vehicleRequest.requestDate}</td>
-                          <td>
-                            <button className="btn btn-primary btn-sm">
-                              Update
-                            </button>
-                          </td>
-                          <td>
-                            <button className="btn btn-danger btn-sm">
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                  )}
+                  {allPendingVehicleRequests.map(vehicleRequest => (
+                    <tr key={vehicleRequest._id}>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/productOwnerDetails",
+                            state: {
+                              productOwnerId: vehicleRequest.requester._id
+                            }
+                          }}
+                        >
+                          {vehicleRequest.requester.fullName}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/vehicleRequestDetails",
+                            state: {
+                              vehicleRequest: vehicleRequest
+                            }
+                          }}
+                        >
+                          {vehicleRequest.vehicleName}
+                        </Link>
+                      </td>
+                      <td>{vehicleRequest.vehicleModel}</td>
+                      <td>{vehicleRequest.vehicleRent}</td>
+                      <td>{vehicleRequest.memberShipDuration}</td>
+                      <td>{vehicleRequest.status}</td>
+                      <td>{vehicleRequest.requestDate}</td>
+                      <td>
+                        <button className="btn btn-primary btn-sm">
+                          Update
+                        </button>
+                      </td>
+                      <td>
+                        <button className="btn btn-danger btn-sm">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+              <Pagination
+                pageSize={pendingPageSize}
+                items={pendingVehicleRequests.length}
+                currentPage={pendingCurrentPage}
+                onPagechange={this.handlePendingPageChange}
+              />
             </div>
           </div>
-          <div className="row">
+          <div
+            className="row card"
+            style={{
+              background: "white",
+              marginTop: "30px",
+              marginLeft: "10px",
+              marginRight: "10px"
+            }}
+          >
             <div className="col-lg-12">
-              <div style={{ marginLeft: "780px" }}>
+              <center>
+                <h3>Approved Vehicle Requests</h3>
+              </center>
+              <div style={{ marginLeft: "820px" }}>
                 {" "}
-                <SearchBox value={searchQuery} onChange={this.handleSearch} />
+                <SearchBox
+                  value={approvedSearchQuery}
+                  onChange={this.handleApprovedSearch}
+                />
               </div>
               <table className="table">
                 <thead className="thead-dark">
@@ -143,22 +285,22 @@ class VehicleRequests extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {allVehicleRequests.map(
-                    vehicleRequest =>
-                      vehicleRequest.status == "Approved" && (
-                        <tr key={vehicleRequest._id}>
-                          <Link
-                            to={{
-                              pathname: "/productOwnerDetails",
-                              state: {
-                                productOwnerId: vehicleRequest.requester._id
-                              }
-                            }}
-                          >
-                            <td>{vehicleRequest.requester.fullName}</td>
-                          </Link>
-                          <td>
-                            {/* <Link
+                  {allApprovedVehicleRequests.map(vehicleRequest => (
+                    <tr key={vehicleRequest._id}>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/productOwnerDetails",
+                            state: {
+                              productOwnerId: vehicleRequest.requester._id
+                            }
+                          }}
+                        >
+                          {vehicleRequest.requester.fullName}
+                        </Link>
+                      </td>
+                      <td>
+                        {/* <Link
                               to={{
                                 pathname: "/vehicleRequestDetails",
                                 state: {
@@ -167,29 +309,28 @@ class VehicleRequests extends Component {
                               }}
                             >
                             </Link> */}
-                            {vehicleRequest.vehicleName}
-                          </td>
-                          <td>{vehicleRequest.vehicleModel}</td>
-                          <td>{vehicleRequest.vehicleRent}</td>
-                          <td>{vehicleRequest.memberShipDuration}</td>
-                          <td>{vehicleRequest.status}</td>
-                          <td>{vehicleRequest.ApprovedDate}</td>
+                        {vehicleRequest.vehicleName}
+                      </td>
+                      <td>{vehicleRequest.vehicleModel}</td>
+                      <td>{vehicleRequest.vehicleRent}</td>
+                      <td>{vehicleRequest.memberShipDuration}</td>
+                      <td>{vehicleRequest.status}</td>
+                      <td>{vehicleRequest.ApprovedDate}</td>
 
-                          <td>
-                            <button className="btn btn-danger btn-sm">
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                  )}
+                      <td>
+                        <button className="btn btn-danger btn-sm">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
               <Pagination
-                pageSize={pageSize}
-                items={vehicleRequests.length}
-                currentPage={currentPage}
-                onPagechange={this.handlePageChange}
+                pageSize={approvedPageSize}
+                items={approvedVehicleRequests.length}
+                currentPage={approvedCurrentPage}
+                onPagechange={this.handleApprovedPageChange}
               />
             </div>
           </div>

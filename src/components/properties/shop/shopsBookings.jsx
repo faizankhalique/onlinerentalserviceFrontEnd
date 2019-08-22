@@ -36,8 +36,6 @@ class ShopBookings extends Component {
                     <th scope="col">ShopOwner</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Security</th>
-                    <th scope="col">Rent</th>
                     <th scope="col">Confirmation</th>
                     <th />
                     <th />
@@ -47,7 +45,8 @@ class ShopBookings extends Component {
                   {shopBookings &&
                     shopBookings.map(
                       shopBooking =>
-                        shopBooking.bookingConfirmation == "Pending" && (
+                        shopBooking.bookingConfirmation == "Pending" &&
+                        shopBooking.status == "Approved" && (
                           <tr key={shopBooking._id}>
                             <td>
                               <Link
@@ -65,8 +64,6 @@ class ShopBookings extends Component {
                             <td>{shopBooking.owner.fullName}</td>
                             <td>{shopBooking.startDate}</td>
                             <td>{shopBooking.endDate}</td>
-                            <td>{shopBooking.security}</td>
-                            <td>{shopBooking.rent}</td>
                             <td>{shopBooking.bookingConfirmation}</td>
                             <td>
                               <Link
@@ -112,12 +109,10 @@ class ShopBookings extends Component {
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
-                    <th scope="col">VechileName</th>
-                    <th scope="col">VechileOwner</th>
+                    <th scope="col">ShopLocation</th>
+                    <th scope="col">ShopOwner</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Security</th>
-                    <th scope="col">Rent</th>
                     <th scope="col">Confirmation</th>
                     <th />
                     <th />
@@ -127,7 +122,8 @@ class ShopBookings extends Component {
                   {shopBookings &&
                     shopBookings.map(
                       shopBooking =>
-                        shopBooking.bookingConfirmation == "Confirm" && (
+                        shopBooking.bookingConfirmation == "Confirm" &&
+                        shopBooking.status == "Approved" && (
                           <tr key={shopBooking._id}>
                             <td>
                               <Link
@@ -145,8 +141,6 @@ class ShopBookings extends Component {
                             <td>{shopBooking.owner.fullName}</td>
                             <td>{shopBooking.startDate}</td>
                             <td>{shopBooking.endDate}</td>
-                            <td>{shopBooking.security}</td>
-                            <td>{shopBooking.rent}</td>
                             <td>{shopBooking.bookingConfirmation}</td>
                             <td>
                               <Link

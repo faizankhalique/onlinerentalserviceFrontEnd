@@ -94,9 +94,9 @@ class ShopRentRequestDetails extends Component {
         const { data: result } = await approvedShopRentRequest(requestId);
         if (result) {
           toast.success("Request Approved successfuly");
-          //   setTimeout(() => {
-          //     window.location.href = "/houseRentRequests";
-          //   }, 1800);
+          setTimeout(() => {
+            window.location.href = "/toolRentRequests";
+          }, 1800);
         }
       } catch (error) {
         toast.error(error + "");

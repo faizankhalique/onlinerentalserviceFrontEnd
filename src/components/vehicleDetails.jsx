@@ -43,12 +43,7 @@ class VehicleDetials extends Component {
     return (
       <React.Fragment>
         {vehicle && (
-          <div
-            className="container-fluid"
-            style={{
-              border: "1px solid black"
-            }}
-          >
+          <div className="container-fluid">
             <div className="row">
               <div className="col-md-5">
                 <center>
@@ -151,6 +146,7 @@ class VehicleDetials extends Component {
                 {vehicle &&
                   vehicleImages.map(image => (
                     <img
+                      key={image}
                       src={image}
                       style={{ height: "50px", width: "50px", margin: "8px" }}
                       onClick={() => {

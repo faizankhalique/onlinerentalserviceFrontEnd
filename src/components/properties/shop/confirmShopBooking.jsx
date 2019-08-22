@@ -4,16 +4,17 @@ import Joi from "joi-browser";
 import diff_days from "../../../utils/diff_days";
 import { toast } from "react-toastify";
 import { updateShopBooking } from "../../services/properties/shop/shopBookingService";
-import { addShopBooking } from "../../services/allRegisterRenters";
+import {
+  addShopBooking,
+  createShopPayment
+} from "../../services/allRegisterRenters";
 class ConfirmShopBooking extends Component {
   state = {
     account: {
       renterName: "",
       shopLocation: "",
       startDate: "",
-      endDate: "",
-      rent: "",
-      security: ""
+      endDate: ""
     },
     errors: [],
     bookingId: "",
@@ -24,11 +25,7 @@ class ConfirmShopBooking extends Component {
     renterName: Joi.string().required(),
     shopLocation: Joi.string().required(),
     startDate: Joi.string().required(),
-    endDate: Joi.string().required(),
-    rent: Joi.number().min(1),
-    security: Joi.number()
-      .min(1)
-      .required()
+    endDate: Joi.string().required()
   };
   componentDidMount() {
     const { shopBooking } = this.props.location.state;
@@ -37,8 +34,6 @@ class ConfirmShopBooking extends Component {
       (account.renterName = shopBooking.renter.fullName),
       (account.startDate = shopBooking.startDate);
     account.endDate = shopBooking.endDate;
-    account.security = shopBooking.security;
-    account.rent = shopBooking.rent;
     this.setState({
       account,
       bookingId: shopBooking._id,
@@ -70,20 +65,19 @@ class ConfirmShopBooking extends Component {
     if (errors) return;
 
     const { account, monthlyRent } = this.state;
-    const date1 = new Date(account.startDate + "," + account.startTime);
-    const date2 = new Date(account.endDate + "," + account.endTime);
+    const date1 = new Date(account.startDate + ",00:00");
+    const date2 = new Date(account.endDate + ",00:00");
     if (date2 > date1) {
       const totalRent =
         parseInt(diff_days(date2, date1)) * parseInt(monthlyRent);
       account.rent = totalRent;
-      this.setState({ account });
     } else if (date1 > date2) {
       toast.error("endDate must be greater than  startdate.");
       return;
     } else {
       const totalRent = 1 * parseInt(monthlyRent);
       account.rent = totalRent;
-      this.setState({ account });
+
       // alert("Dates are equal.");
     }
 
@@ -105,8 +99,22 @@ class ConfirmShopBooking extends Component {
             bookingId: bookingId,
             renterId: renterId
           });
-          if (result2)
+          if (result2) {
             toast.success("Booking add into AllRegisterRenters Successfully");
+            const shopPayment = {
+              shopBooking: bookingId,
+              security: 0,
+              rents: []
+            };
+            const { data: result3 } = await createShopPayment(
+              renterId,
+              shopPayment
+            );
+            if (result3)
+              toast.success(
+                "shopPayment create into AllRegisterRenters Successfully"
+              );
+          }
         }
       }
     } catch (error) {
@@ -172,22 +180,6 @@ class ConfirmShopBooking extends Component {
                     value={account.endDate}
                     onChange={this.handleChange}
                     errors={errors.endDate}
-                  />
-                  <Input
-                    label="Security"
-                    name="security"
-                    type="number"
-                    value={account.security}
-                    onChange={this.handleChange}
-                    errors={errors.security}
-                  />
-                  <Input
-                    label="Rent"
-                    name="rent"
-                    type="number"
-                    value={account.rent}
-                    onChange={this.handleChange}
-                    errors={errors.rent}
                   />
                   <button
                     style={{ marginTop: "4px", marginLeft: "750px" }}

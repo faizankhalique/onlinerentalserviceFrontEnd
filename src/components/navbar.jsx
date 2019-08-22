@@ -9,7 +9,7 @@ class Navbar extends Component {
     return (
       <React.Fragment>
         <nav
-          className="navbar  fixed-top navbar-expand-lg navbar-dark"
+          className="navbar  fixed-top navbar-expand-lg navbar-light"
           style={{ height: "70px", background: "#2c3e50" }}
         >
           <Link className="navbar-brand" to="/">
@@ -93,7 +93,11 @@ class Navbar extends Component {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink style={{ color: "white" }} className="nav-link" to="#">
+                <NavLink
+                  style={{ color: "white" }}
+                  className="nav-link"
+                  to="/contactUs"
+                >
                   <i className="fa fa-phone" aria-hidden="true">
                     {" "}
                     <b>Contact us</b>
@@ -191,7 +195,11 @@ class Navbar extends Component {
                     <NavLink
                       style={{ color: "white" }}
                       className="nav-link"
-                      to="/userProfile"
+                      to={
+                        user.accountType === "admin"
+                          ? "/reports"
+                          : "/userProfile"
+                      }
                     >
                       <img
                         src={user.userImage}

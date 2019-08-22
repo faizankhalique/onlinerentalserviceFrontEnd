@@ -25,3 +25,6 @@ export async function deleteHouseRentRequest(id) {
 export async function sendEmail(emailData) {
   return await http.post(baseUrl.concat("sendemail/"), emailData);
 }
+export async function getRenterHouseBooking(id) {
+  return http.get(apiEndPoint + "/" + id);
+}

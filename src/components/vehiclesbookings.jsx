@@ -48,8 +48,7 @@ class VehiclesBookings extends Component {
                   {vehiclesBookings &&
                     vehiclesBookings.map(
                       vehiclesBooking =>
-                        vehiclesBooking.bookingConfirmation ==
-                          "Not-Confirm" && (
+                        vehiclesBooking.bookingConfirmation == "Pending" && (
                           <tr key={vehiclesBooking._id}>
                             <td>
                               <Link

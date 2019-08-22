@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
-import diff_days from "../../../utils/diff_days";
+import diff_months from "../../../utils/diff_months";
 import { toast } from "react-toastify";
 import authService from "../../services/authService";
 import { addShopRentRequest } from "../../services/properties/shop/shopBookingService";
@@ -69,22 +69,21 @@ class ShopRentRequestForm extends Component {
     const { account, monthlyRent } = this.state;
     const date1 = new Date(account.startDate + ",00:00");
     const date2 = new Date(account.endDate + ",00:00");
-    let days = 0;
-    let totalRent = 0;
+    let months = 0;
+
     if (date2 > date1) {
-      days = parseInt(diff_days(date2, date1));
-      totalRent = days * parseInt(monthlyRent);
+      months = parseInt(diff_months(date2, date1));
+      if (months === 1) months = 1;
     } else if (date1 > date2) {
       toast.error("endDate must be greater than  startdate.");
       return;
     } else {
-      totalRent = 1 * parseInt(monthlyRent);
-      days = 1;
+      months = 1;
     }
     try {
       const shopRentRequest = { ...this.state.account };
       const confirm = window.confirm(
-        `your total rent will be ${totalRent} of ${days} days. Do you want to submit request?`
+        `your total months are ${months} and Rent Per Month will ${monthlyRent}. Do you want to submit request?`
       );
       if (confirm) {
         const response = await addShopRentRequest(shopRentRequest);

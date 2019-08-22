@@ -52,7 +52,7 @@ class ProductOwnerLeftNav extends Component {
                   Shops Request
                 </i>
               </NavLink>
-              <NavLink className="dropdown-item" to="/ToolRequestForm">
+              <NavLink className="dropdown-item" to="/toolRequestForm">
                 <i className="fa fa-wrench" aria-hidden="true">
                   {" "}
                   Tool Request

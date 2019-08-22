@@ -22,9 +22,15 @@ export async function addOwnerHouse(ownerId, houseId) {
 export async function addOwnerShop(ownerId, shopId) {
   return await http.post(apiEndPoint + "addshop", { ownerId, shopId });
 }
+export async function addOwnerTool(ownerId, toolId) {
+  return await http.post(apiEndPoint + "addtool", { ownerId, toolId });
+}
 export async function getOwnerHouses(id) {
   return await http.get(apiEndPoint + "ownerhouses/" + id);
 }
 export async function getOwnerShops(id) {
   return await http.get(apiEndPoint + "ownershops/" + id);
+}
+export async function getOwnerTools(id) {
+  return await http.get(apiEndPoint + "ownertools/" + id);
 }

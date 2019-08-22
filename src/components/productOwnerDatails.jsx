@@ -76,18 +76,6 @@ class ProductOwnerDetails extends Component {
                     <th>RegisteredDate</th>
                     <td>{productOwner.registeredDate}</td>
                   </tr>
-                  <tr>
-                    <th>TotalVehicles</th>
-                    <td>{totalVehicles}</td>
-                  </tr>
-                  <tr>
-                    <th>VehiclesOnRent</th>
-                    <td>{vehiclesOnRent}</td>
-                  </tr>
-                  <tr>
-                    <th>freeVehicles</th>
-                    <td>{freeVehicles}</td>
-                  </tr>
                 </thead>
               </table>
               <div />

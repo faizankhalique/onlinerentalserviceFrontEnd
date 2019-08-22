@@ -5,18 +5,112 @@ import {
 } from "../../services/properties/shop/shopRequestService";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { paginate } from "./../../../utils/paginate";
+import SearchBox from "./../../common/searchBox";
+import Pagination from "./../../common/pagination";
 class ShopRequests extends Component {
-  state = { shopRequests: [] };
+  state = {
+    shopRequests: [],
+    pendingShopRequests: [],
+    approvedShopRequests: [],
+    pendingCurrentPage: 1,
+    pendingPageSize: 4,
+    pendingSearchQuery: "",
+    approvedCurrentPage: 1,
+    approvedPageSize: 4,
+    approvedSearchQuery: ""
+  };
   async componentDidMount() {
     const { data: shopRequests } = await getShopRequests();
     try {
       if (shopRequests) {
-        this.setState({ shopRequests });
+        let pendingShopRequests = shopRequests.filter(
+          vr => vr.status == "Pending"
+        );
+        let approvedShopRequests = shopRequests.filter(
+          vr => vr.status == "Approved"
+        );
+        this.setState({
+          shopRequests,
+          pendingShopRequests,
+          approvedShopRequests
+        });
       }
     } catch (error) {
       toast.error(error + "");
     }
   }
+  handlePendingPageChange = page => {
+    this.setState({ pendingCurrentPage: page });
+  };
+  handleApprovedPageChange = page => {
+    this.setState({ approvedCurrentPage: page });
+  };
+  handlePendingSearch = query => {
+    this.setState({ pendingSearchQuery: query, pendingCurrentPage: 1 });
+  };
+  handleApprovedSearch = query => {
+    this.setState({ approvedSearchQuery: query, approvedCurrentPage: 1 });
+  };
+  filterPendingShopRequests = () => {
+    const {
+      pendingShopRequests,
+      pendingPageSize,
+      pendingCurrentPage,
+      pendingSearchQuery
+    } = this.state;
+    let allRequests;
+    let paginatePendingShopRequests = [];
+    if (pendingSearchQuery) {
+      allRequests = pendingShopRequests.filter(v =>
+        v.requester.fullName
+          .toLowerCase()
+          .startsWith(pendingSearchQuery.toLowerCase())
+      );
+      paginatePendingShopRequests = paginate(
+        allRequests,
+        pendingCurrentPage,
+        pendingPageSize
+      );
+      return paginatePendingShopRequests;
+    }
+    paginatePendingShopRequests = paginate(
+      pendingShopRequests,
+      pendingCurrentPage,
+      pendingPageSize
+    );
+    return paginatePendingShopRequests;
+  };
+  filterApprovedShopRequests = () => {
+    const {
+      approvedShopRequests,
+      approvedCurrentPage,
+      approvedPageSize,
+      approvedSearchQuery
+    } = this.state;
+    let allRequests;
+    let paginateApprovedShopRequests = [];
+    if (approvedSearchQuery) {
+      allRequests = approvedShopRequests.filter(v =>
+        v.requester.fullName
+          .toLowerCase()
+          .startsWith(approvedSearchQuery.toLowerCase())
+      );
+      paginateApprovedShopRequests = paginate(
+        allRequests,
+        approvedCurrentPage,
+        approvedPageSize
+      );
+      return paginateApprovedShopRequests;
+    }
+    paginateApprovedShopRequests = paginate(
+      approvedShopRequests,
+      approvedCurrentPage,
+      approvedPageSize
+    );
+
+    return paginateApprovedShopRequests;
+  };
   handleDelete = async id => {
     const confirm = window.confirm("Do you want to Delete Request?");
     if (confirm) {
@@ -41,17 +135,38 @@ class ShopRequests extends Component {
     }
   };
   render() {
-    const { shopRequests } = this.state;
+    const {
+      pendingShopRequests,
+      pendingCurrentPage,
+      pendingPageSize,
+      pendingSearchQuery,
+      approvedShopRequests,
+      approvedCurrentPage,
+      approvedPageSize,
+      approvedSearchQuery
+    } = this.state;
+    let allPendingShopRequests = this.filterPendingShopRequests();
+    let allApprovedShopRequests = this.filterApprovedShopRequests();
     return (
       <React.Fragment>
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
+              <center>
+                <h3>Pending Shop Requests</h3>
+              </center>
+              <div style={{ marginLeft: "870px" }}>
+                {" "}
+                <SearchBox
+                  value={pendingSearchQuery}
+                  onChange={this.handlePendingSearch}
+                />
+              </div>
               <table className="table">
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
-                    <th scope="col">Citiy</th>
+                    <th scope="col">City</th>
                     <th scope="col">Location</th>
                     <th scope="col">Area</th>
                     <th scope="col">MonthlyRent</th>
@@ -63,78 +178,91 @@ class ShopRequests extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {shopRequests.map(
-                    shopRequest =>
-                      shopRequest.status == "Pending" && (
-                        <tr key={shopRequest._id}>
-                          <td>
-                            <Link
-                              to={{
-                                pathname: "/productOwnerDetails",
-                                state: {
-                                  productOwnerId: shopRequest.requester._id
-                                }
-                              }}
-                            >
-                              {shopRequest.requester.fullName}
-                            </Link>
-                          </td>
-                          <td>
-                            <Link
-                              to={{
-                                pathname: "/shopRequestDetails",
-                                state: {
-                                  shopRequest: shopRequest
-                                }
-                              }}
-                            >
-                              {shopRequest.city}
-                            </Link>
-                          </td>
-                          <td>{shopRequest.location}</td>
-                          <td>{shopRequest.area}</td>
-                          <td>{shopRequest.monthlyRent}</td>
-                          <td>{shopRequest.memberShipDuration}</td>
-                          <td>{shopRequest.status}</td>
-                          <td>{shopRequest.requestDate}</td>
-                          <td>
-                            <Link
-                              to={{
-                                pathname: "/updateShopRequest",
-                                state: {
-                                  shopRequest: shopRequest
-                                }
-                              }}
-                            >
-                              <button className="btn btn-primary btn-sm">
-                                Update
-                              </button>
-                            </Link>
-                          </td>
-                          <td>
-                            <button
-                              className="btn btn-danger btn-sm"
-                              onClick={() => {
-                                this.handleDelete(shopRequest._id);
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                  )}
+                  {allPendingShopRequests.map(shopRequest => (
+                    <tr key={shopRequest._id}>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/productOwnerDetails",
+                            state: {
+                              productOwnerId: shopRequest.requester._id
+                            }
+                          }}
+                        >
+                          {shopRequest.requester.fullName}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/shopRequestDetails",
+                            state: {
+                              shopRequest: shopRequest
+                            }
+                          }}
+                        >
+                          {shopRequest.city}
+                        </Link>
+                      </td>
+                      <td>{shopRequest.location}</td>
+                      <td>{shopRequest.area}</td>
+                      <td>{shopRequest.monthlyRent}</td>
+                      <td>{shopRequest.memberShipDuration}</td>
+                      <td>{shopRequest.status}</td>
+                      <td>{shopRequest.requestDate}</td>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/updateShopRequest",
+                            state: {
+                              shopRequest: shopRequest
+                            }
+                          }}
+                        >
+                          <button className="btn btn-primary btn-sm">
+                            Update
+                          </button>
+                        </Link>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => {
+                            this.handleDelete(shopRequest._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+              <Pagination
+                pageSize={pendingPageSize}
+                items={pendingShopRequests.length}
+                currentPage={pendingCurrentPage}
+                onPagechange={this.handlePendingPageChange}
+              />
             </div>
           </div>
           <div className="row">
             <div className="col-lg-12">
+              <center>
+                <h3>Approved Shop Requests</h3>
+              </center>
+              <div style={{ marginLeft: "870px" }}>
+                {" "}
+                <SearchBox
+                  value={approvedSearchQuery}
+                  onChange={this.handleApprovedSearch}
+                />
+              </div>
               <table className="table">
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
-                    <th scope="col">Citiy</th>
+                    <th scope="col">City</th>
                     <th scope="col">Location</th>
                     <th scope="col">Area</th>
                     <th scope="col">MonthlyRent</th>
@@ -146,7 +274,7 @@ class ShopRequests extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {shopRequests.map(
+                  {allApprovedShopRequests.map(
                     shopRequest =>
                       shopRequest.status == "Approved" && (
                         <tr key={shopRequest._id}>
@@ -201,6 +329,12 @@ class ShopRequests extends Component {
                   )}
                 </tbody>
               </table>
+              <Pagination
+                pageSize={approvedPageSize}
+                items={approvedShopRequests.length}
+                currentPage={approvedCurrentPage}
+                onPagechange={this.handleApprovedPageChange}
+              />
             </div>
           </div>
         </div>

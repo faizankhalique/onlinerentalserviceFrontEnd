@@ -43,12 +43,7 @@ class HouseDetails extends Component {
     return (
       <React.Fragment>
         {house && (
-          <div
-            className="container-fluid"
-            style={{
-              border: "1px solid black"
-            }}
-          >
+          <div className="container-fluid">
             <div className="row">
               <div className="col-md-5">
                 <center>

@@ -4,16 +4,17 @@ import Joi from "joi-browser";
 import diff_days from "../../../utils/diff_days";
 import { toast } from "react-toastify";
 import { updateHouseBooking } from "../../services/properties/house/houseBookingService";
-import { addHouseBooking } from "../../services/allRegisterRenters";
+import {
+  addHouseBooking,
+  createHousePayment
+} from "../../services/allRegisterRenters";
 class ConfirmHouseBooking extends Component {
   state = {
     account: {
       renterName: "",
       houseLocation: "",
       startDate: "",
-      endDate: "",
-      rent: "",
-      security: ""
+      endDate: ""
     },
     errors: [],
     bookingId: "",
@@ -24,11 +25,7 @@ class ConfirmHouseBooking extends Component {
     renterName: Joi.string().required(),
     houseLocation: Joi.string().required(),
     startDate: Joi.string().required(),
-    endDate: Joi.string().required(),
-    rent: Joi.number().min(1),
-    security: Joi.number()
-      .min(1)
-      .required()
+    endDate: Joi.string().required()
   };
   componentDidMount() {
     const { houseBooking } = this.props.location.state;
@@ -37,8 +34,6 @@ class ConfirmHouseBooking extends Component {
       (account.renterName = houseBooking.renter.fullName),
       (account.startDate = houseBooking.startDate);
     account.endDate = houseBooking.endDate;
-    account.security = houseBooking.security;
-    account.rent = houseBooking.rent;
     this.setState({
       account,
       bookingId: houseBooking._id,
@@ -75,15 +70,12 @@ class ConfirmHouseBooking extends Component {
     if (date2 > date1) {
       const totalRent =
         parseInt(diff_days(date2, date1)) * parseInt(monthlyRent);
-      account.rent = totalRent;
-      this.setState({ account });
     } else if (date1 > date2) {
       toast.error("endDate must be greater than  startdate.");
       return;
     } else {
       const totalRent = 1 * parseInt(monthlyRent);
-      account.rent = totalRent;
-      this.setState({ account });
+
       // alert("Dates are equal.");
     }
 
@@ -105,8 +97,22 @@ class ConfirmHouseBooking extends Component {
             bookingId: bookingId,
             renterId: renterId
           });
-          if (result2)
+          if (result2) {
             toast.success("Booking add into AllRegisterRenters Successfully");
+            const housePayment = {
+              houseBooking: bookingId,
+              security: 0,
+              rents: []
+            };
+            const { data: result3 } = await createHousePayment(
+              renterId,
+              housePayment
+            );
+            if (result3)
+              toast.success(
+                "housePayment create into AllRegisterRenters Successfully"
+              );
+          }
         }
       }
     } catch (error) {
@@ -173,22 +179,7 @@ class ConfirmHouseBooking extends Component {
                     onChange={this.handleChange}
                     errors={errors.endDate}
                   />
-                  <Input
-                    label="Security"
-                    name="security"
-                    type="number"
-                    value={account.security}
-                    onChange={this.handleChange}
-                    errors={errors.security}
-                  />
-                  <Input
-                    label="Rent"
-                    name="rent"
-                    type="number"
-                    value={account.rent}
-                    onChange={this.handleChange}
-                    errors={errors.rent}
-                  />
+
                   <button
                     style={{ marginTop: "4px", marginLeft: "750px" }}
                     type="submit"

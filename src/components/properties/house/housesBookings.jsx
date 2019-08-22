@@ -36,8 +36,7 @@ class HouseBookings extends Component {
                     <th scope="col">HouseOwner</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Security</th>
-                    <th scope="col">Rent</th>
+
                     <th scope="col">Confirmation</th>
                     <th />
                     <th />
@@ -65,8 +64,7 @@ class HouseBookings extends Component {
                             <td>{houseBooking.owner.fullName}</td>
                             <td>{houseBooking.startDate}</td>
                             <td>{houseBooking.endDate}</td>
-                            <td>{houseBooking.security}</td>
-                            <td>{houseBooking.rent}</td>
+
                             <td>{houseBooking.bookingConfirmation}</td>
                             <td>
                               <Link
@@ -116,8 +114,7 @@ class HouseBookings extends Component {
                     <th scope="col">VechileOwner</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Security</th>
-                    <th scope="col">Rent</th>
+
                     <th scope="col">Confirmation</th>
                     <th />
                     <th />
@@ -145,8 +142,6 @@ class HouseBookings extends Component {
                             <td>{houseBooking.owner.fullName}</td>
                             <td>{houseBooking.startDate}</td>
                             <td>{houseBooking.endDate}</td>
-                            <td>{houseBooking.security}</td>
-                            <td>{houseBooking.rent}</td>
                             <td>{houseBooking.bookingConfirmation}</td>
                             <td>
                               <Link

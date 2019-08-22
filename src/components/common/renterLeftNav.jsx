@@ -89,7 +89,7 @@ class RenterLeftNav extends Component {
               <NavLink className="dropdown-item" to="/renterShopBookings">
                 Shops
               </NavLink>
-              <NavLink className="dropdown-item" to="/renterToolsBookings">
+              <NavLink className="dropdown-item" to="/renterToolBookings">
                 Tools
               </NavLink>
             </div>

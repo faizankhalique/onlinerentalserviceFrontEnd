@@ -9,9 +9,9 @@ class OwnerNav extends Component {
       <React.Fragment>
         <nav
           className="navbar sticky-top navbar-expand-lg navbar-light"
-          style={{ backgroundColor: "#39CCCC" }}
+          style={{ backgroundColor: "#2c3e50" }}
         >
-          <NavLink className="navbar-brand" to="#">
+          <NavLink className="navbar-brand" to="#" style={{ color: "white" }}>
             Product Owner
           </NavLink>
           <button
@@ -29,7 +29,7 @@ class OwnerNav extends Component {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <NavLink className="nav-link" to="/">
+                <NavLink className="nav-link" to="/" style={{ color: "white" }}>
                   Home <span className="sr-only">(current)</span>
                 </NavLink>
               </li>
@@ -39,55 +39,21 @@ class OwnerNav extends Component {
                   to="/userProfile"
                   tabIndex="-1"
                   aria-disabled="true"
+                  style={{ color: "white" }}
                 >
                   {user.fullName}
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/logOut">
+                <NavLink
+                  className="nav-link"
+                  to="/logOut"
+                  style={{ color: "white" }}
+                >
                   Log-out
                 </NavLink>
               </li>
-              <li className="nav-item dropdown">
-                <NavLink
-                  className="nav-link dropdown-toggle"
-                  to="#"
-                  id="navbarDropdown"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  Dropdown
-                </NavLink>
-                <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <NavLink className="dropdown-item" to="#">
-                    Action
-                  </NavLink>
-                  <NavLink className="dropdown-item" to="#">
-                    Another action
-                  </NavLink>
-                  <div className="dropdown-divider" />
-                  <NavLink className="dropdown-item" to="#">
-                    Something else here
-                  </NavLink>
-                </div>
-              </li>
             </ul>
-            <form className="form-inline my-2 my-lg-0">
-              <input
-                className="form-control mr-sm-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button
-                className="btn btn-outline-success my-2 my-sm-0"
-                type="button"
-              >
-                Search
-              </button>
-            </form>
           </div>
         </nav>
       </React.Fragment>

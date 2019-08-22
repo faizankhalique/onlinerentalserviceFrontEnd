@@ -38,12 +38,7 @@ class ShopDetails extends Component {
     return (
       <React.Fragment>
         {shop && (
-          <div
-            className="container-fluid"
-            style={{
-              border: "1px solid black"
-            }}
-          >
+          <div className="container-fluid">
             <div className="row">
               <div className="col-md-5">
                 <center>
@@ -52,7 +47,7 @@ class ShopDetails extends Component {
                 </center>
                 <br />
                 <table className="table table-bordered">
-                  <thead style={{ height: "1500px" }}>
+                  <thead>
                     <tr>
                       <th>City</th>
                       <td>{shop.city}</td>

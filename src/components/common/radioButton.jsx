@@ -6,7 +6,8 @@ const RadioButton = ({
   option1,
   option2,
   option3,
-  errors
+  errors,
+  color
 }) => {
   return (
     <div>
@@ -14,7 +15,7 @@ const RadioButton = ({
         className="col-form-label"
         style={{
           fontFamily: "Arial, Helvetica, sans-serif",
-          color: "#CDCDCD"
+          color: color || "#CDCDCD"
         }}
       >
         <b> {label}</b>
@@ -34,7 +35,7 @@ const RadioButton = ({
           htmlFor={option1}
           style={{
             fontFamily: "Arial, Helvetica, sans-serif",
-            color: "#CDCDCD"
+            color: color || "#CDCDCD"
           }}
         >
           {option1}
@@ -53,7 +54,7 @@ const RadioButton = ({
           htmlFor={option2}
           style={{
             fontFamily: "Arial, Helvetica, sans-serif",
-            color: "#CDCDCD"
+            color: color || "#CDCDCD"
           }}
         >
           {option2}
@@ -73,7 +74,7 @@ const RadioButton = ({
             htmlFor={option2}
             style={{
               fontFamily: "Arial, Helvetica, sans-serif",
-              color: "#CDCDCD"
+              color: color || "#CDCDCD"
             }}
           >
             {option3}

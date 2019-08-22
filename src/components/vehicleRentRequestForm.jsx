@@ -10,7 +10,7 @@ class VehicleRentRequestForm extends Component {
     account: {
       requester: "sadd",
       vehicle: "",
-      duration: "",
+
       purpose: "",
       licenseNo: "",
       startDate: "",
@@ -24,7 +24,7 @@ class VehicleRentRequestForm extends Component {
   schema = {
     requester: Joi.string(),
     vehicle: Joi.string(),
-    duration: Joi.string().required(),
+
     purpose: Joi.string().required(),
     licenseNo: Joi.string().required(),
     startDate: Joi.string().required(),
@@ -127,22 +127,6 @@ class VehicleRentRequestForm extends Component {
                 </h4>
                 <div className="form-group">
                   <Input
-                    label="Duration"
-                    name="duration"
-                    type="text"
-                    value={account.duration}
-                    onChange={this.handleChange}
-                    errors={errors.duration}
-                  />
-                  <Input
-                    label="LicenseNo"
-                    name="licenseNo"
-                    type="text"
-                    value={account.licenseNo}
-                    onChange={this.handleChange}
-                    errors={errors.licenseNo}
-                  />
-                  <Input
                     label="StartDate"
                     name="startDate"
                     type="date"
@@ -157,6 +141,14 @@ class VehicleRentRequestForm extends Component {
                     value={account.endDate}
                     onChange={this.handleChange}
                     errors={errors.endDate}
+                  />
+                  <Input
+                    label="LicenseNo"
+                    name="licenseNo"
+                    type="text"
+                    value={account.licenseNo}
+                    onChange={this.handleChange}
+                    errors={errors.licenseNo}
                   />
                   <TextArea
                     label="Purpose"

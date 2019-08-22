@@ -167,79 +167,56 @@ class AdminLeftNav extends Component {
               </NavLink>
             </div>
           </li>
-
-          <li className="nav-item dropdown">
-            <NavLink
-              className="nav-link dropdown-toggle"
-              to="#"
-              id="navbarDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i className="fa fa-home" aria-hidden="true">
-                {" "}
-                Properties
-              </i>
-            </NavLink>
-            <div
-              style={{ background: "#2b455f" }}
-              className="dropdown-menu"
-              aria-labelledby="navbarDropdown"
-            >
-              <NavLink className="dropdown-item" to="#">
-                Action
-              </NavLink>
-              <NavLink className="dropdown-item" to="#">
-                Another action
-              </NavLink>
-              <div className="dropdown-divider" />
-              <NavLink className="dropdown-item" to="#">
-                Something else here
-              </NavLink>
-            </div>
-          </li>
-          <li className="nav-item dropdown">
-            <NavLink
-              className="nav-link dropdown-toggle"
-              to="#"
-              id="navbarDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i className="fa fa-wrench" aria-hidden="true">
-                {" "}
-                Tools
-              </i>
-            </NavLink>
-            <div
-              style={{ background: "#2b455f" }}
-              className="dropdown-menu"
-              aria-labelledby="navbarDropdown"
-            >
-              <NavLink className="dropdown-item" to="#">
-                Action
-              </NavLink>
-              <NavLink className="dropdown-item" to="#">
-                Another action
-              </NavLink>
-              <div className="dropdown-divider" />
-              <NavLink className="dropdown-item" to="#">
-                Something else here
-              </NavLink>
-            </div>
-          </li>
           <li>
+            <NavLink to="/reports">
+              <i className="fa fa-table" aria-hidden="true">
+                {" "}
+                Statistics
+              </i>
+            </NavLink>
+          </li>
+          {/* <li className="nav-item dropdown">
+            <NavLink
+              className="nav-link dropdown-toggle"
+              to="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i className="fa fa-bus" aria-hidden="true">
+                {" "}
+                Renters Payments
+              </i>
+            </NavLink>
+            <div
+              style={{ background: "#2b455f" }}
+              className="dropdown-menu"
+              aria-labelledby="navbarDropdown"
+            >
+              <NavLink className="dropdown-item" to="#">
+                Vehicles Payments
+              </NavLink>
+              <NavLink className="dropdown-item" to="#">
+                Houses Payments
+              </NavLink>
+              <NavLink className="dropdown-item" to="#">
+                Shops Payments
+              </NavLink>
+              <NavLink className="dropdown-item" to="#">
+                Tools Payments
+              </NavLink>
+            </div>
+          </li> */}
+          {/* <li>
             <NavLink to="#">
               <i className="fa fa-bus" aria-hidden="true">
                 {" "}
                 Vehicles
               </i>
             </NavLink>
-          </li>
+          </li> */}
           <li>
             <NavLink to="#">
               <i className="fa fa-trash-o" aria-hidden="true">
