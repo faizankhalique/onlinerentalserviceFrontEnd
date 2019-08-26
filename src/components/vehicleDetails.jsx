@@ -43,7 +43,7 @@ class VehicleDetials extends Component {
     return (
       <React.Fragment>
         {vehicle && (
-          <div className="container-fluid">
+          <div className="container-fluid" style={{ marginTop: "25px" }}>
             <div className="row">
               <div className="col-md-5">
                 <center>
@@ -51,7 +51,10 @@ class VehicleDetials extends Component {
                   <h3>Vehicle Details</h3>
                 </center>
                 <br />
-                <table className="table table-bordered">
+                <table
+                  className="table table-bordered"
+                  style={{ backgroundColor: "white" }}
+                >
                   <thead>
                     <tr>
                       <th>VehicleName</th>

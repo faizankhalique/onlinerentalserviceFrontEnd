@@ -195,6 +195,7 @@ class Navbar extends Component {
                     <NavLink
                       style={{ color: "white" }}
                       className="nav-link"
+                      // to="/userProfile"
                       to={
                         user.accountType === "admin"
                           ? "/reports"

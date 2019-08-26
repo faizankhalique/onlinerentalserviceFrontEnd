@@ -4,17 +4,21 @@ import Joi from "joi-browser";
 import diff_days from "../utils/diff_days";
 import { toast } from "react-toastify";
 import { updateVehiclesBookings } from "./services/vehicleBookingService";
-import { addVehiclesBooking } from "./services/allRegisterRenters";
+import Select from "./common/select";
 class ConfirmBooking extends Component {
   state = {
     account: {
       renterName: "",
       vehicleName: "",
+      vehicleId: "",
       startDate: "",
       endDate: "",
-      rent: "",
+      totalRent: "",
+      totalDays: "",
       security: "",
-      commission: ""
+      commission: "",
+      ownerRent: "",
+      bookingStatus: ""
     },
     errors: [],
     bookingId: "",
@@ -27,9 +31,13 @@ class ConfirmBooking extends Component {
   schema = {
     renterName: Joi.string().required(),
     vehicleName: Joi.string().required(),
+    vehicleId: Joi.string().required(),
     startDate: Joi.string().required(),
     endDate: Joi.string().required(),
-    rent: Joi.number().min(0),
+    bookingStatus: Joi.string().required(),
+    totalRent: Joi.number().min(0),
+    totalDays: Joi.number().min(1),
+    ownerRent: Joi.number().min(0),
     security: Joi.number()
       .min(0)
       .required(),
@@ -38,13 +46,17 @@ class ConfirmBooking extends Component {
   componentDidMount() {
     const { vehiclesBooking } = this.props.location.state;
     const account = this.state.account;
-    (account.vehicleName = vehiclesBooking.vehicle.vehicleName),
-      (account.renterName = vehiclesBooking.renter.fullName),
-      (account.startDate = vehiclesBooking.startDate);
+    account.vehicleName = vehiclesBooking.vehicle.vehicleName;
+    account.vehicleId = vehiclesBooking.vehicle._id;
+    account.renterName = vehiclesBooking.renter.fullName;
+    account.startDate = vehiclesBooking.startDate;
     account.endDate = vehiclesBooking.endDate;
-    account.security = vehiclesBooking.security;
-    account.commission = vehiclesBooking.commission;
-
+    account.bookingStatus = vehiclesBooking.bookingStatus;
+    account.security = vehiclesBooking.payment.security;
+    account.commission = vehiclesBooking.payment.commission;
+    account.totalDays = vehiclesBooking.payment.totalDays;
+    account.totalRent = vehiclesBooking.payment.totalRent;
+    account.ownerRent = vehiclesBooking.payment.ownerRent;
     this.setState({
       account,
       bookingId: vehiclesBooking._id,
@@ -52,11 +64,6 @@ class ConfirmBooking extends Component {
       vehicleRent: vehiclesBooking.vehicle.vehicleRent,
       vehiclesBooking
     });
-    this.calculateRent(
-      account.endDate,
-      account.startDate,
-      vehiclesBooking.vehicle.vehicleRent
-    );
   }
   validate = () => {
     const options = { abortEarly: false };
@@ -83,20 +90,21 @@ class ConfirmBooking extends Component {
       const totalRent = totalDays * vehicleRent;
       const commission = parseInt(totalRent * 0.2);
       const account = this.state.account;
-      account.rent = totalRent;
+      account.totalRent = totalRent;
+      account.totalDays = totalDays;
       account.commission = commission;
-      this.setState({ account, totalDays: totalDays });
+      account.ownerRent = totalRent - commission;
+      this.setState({ account });
     } else {
       const totalDays = 1;
       const totalRent = totalDays * vehicleRent;
       const commission = parseInt(totalRent * 0.2);
       const account = this.state.account;
-      account.rent = totalRent;
+      account.totalRent = totalRent;
+      account.totalDays = totalDays;
       account.commission = commission;
-      this.setState({
-        totalDays,
-        account
-      });
+      account.ownerRent = totalRent - commission;
+      this.setState({ account });
     }
   };
   handleSubmit = async e => {
@@ -113,14 +121,27 @@ class ConfirmBooking extends Component {
       toast.error("endDate must be greater than  startdate.");
       return;
     }
-
     this.calculateRent(account.endDate, account.startDate, vehicleRent);
-    const totalDays = diff_days(endDate, startDate) + 1;
+    if (account.bookingStatus == "Complete") {
+      const confirm = window.confirm("Do you want to End Booking");
+      if (confirm) {
+        const currentDate = new Date(
+          new Date().toLocaleDateString() + ",00:00"
+        );
+        if (endDate > currentDate || endDate < currentDate) {
+          toast.error("Please set End date to current Date ");
+          return;
+        }
+      } else {
+        return;
+      }
+    }
     const { account: bookingData, bookingId, renterId } = this.state;
     try {
       const confirm = window.confirm(
-        `Total Days :${totalDays}
-         Total Rent :${bookingData.rent}
+        `Total Days :${bookingData.totalDays}
+         Total Rent :${bookingData.totalRent}
+         Owner Rent :${bookingData.ownerRent}
          Commission :${bookingData.commission}
          Do you want to submit?`
       );
@@ -131,12 +152,8 @@ class ConfirmBooking extends Component {
         );
         if (result) {
           toast.success("Booking Confirm Successfully");
-          const { data: result2 } = await addVehiclesBooking({
-            bookingId: bookingId,
-            renterId: renterId
-          });
-          if (result2)
-            toast.success("Booking add into AllRegisterRenters Successfully");
+
+          // this.props.history.replace("/renterAllVehiclesBookingsDetails");
         }
       }
     } catch (error) {
@@ -145,7 +162,7 @@ class ConfirmBooking extends Component {
   };
 
   render() {
-    const { account, errors, totalDays, vehicleRent } = this.state;
+    const { account, errors, vehicleRent } = this.state;
     return (
       <React.Fragment>
         <div className="container" style={{ background: "#E6F2F3" }}>
@@ -158,7 +175,7 @@ class ConfirmBooking extends Component {
                 margin: "20px 0px 15px 85px"
               }}
             >
-              <b> Total Days:{totalDays}</b>
+              <b> Total Days:{account.totalDays}</b>
             </div>
             <div
               className="col-sm-2"
@@ -178,7 +195,7 @@ class ConfirmBooking extends Component {
                 margin: "20px 0px 15px 50px"
               }}
             >
-              <b>Total Rent:{account.rent}</b>
+              <b>Total Rent:{account.totalRent}</b>
             </div>
             <div
               className="col-sm-2"
@@ -259,9 +276,18 @@ class ConfirmBooking extends Component {
                     label="Rent"
                     name="rent"
                     type="number"
-                    value={account.rent}
+                    value={account.totalRent}
                     onChange={this.handleChange}
-                    errors={errors.rent}
+                    errors={errors.totalRent}
+                    // readonly={true}
+                  />
+                  <Select
+                    label="BookingStatus"
+                    name="bookingStatus"
+                    onChange={this.handleChange}
+                    value=""
+                    options={["Continue", "Complete"]}
+                    errors={errors.bookingStatus}
                   />
                   <button
                     style={{ marginTop: "4px", marginLeft: "750px" }}

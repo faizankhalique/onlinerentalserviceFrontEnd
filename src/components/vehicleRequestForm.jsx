@@ -3,13 +3,17 @@ import Joi from "joi-browser";
 import { toast } from "react-toastify";
 import UploadFiles from "./common/uploadFiles";
 import Input from "./common/input";
-import { addVehicleRequest } from "./services/vehicleRequestService";
-import auth from "./services/authService";
+import {
+  addVehicleRequest,
+  updateVehicleRequest
+} from "./services/vehicleRequestService";
 import Select from "./common/select";
+import authService from "./services/authService";
+
 class VehicleRequestForm extends Component {
   state = {
     account: {
-      requester: "3443",
+      requester: "",
       vehicleName: "",
       vehicleModel: "",
       vehicleNo: "",
@@ -23,7 +27,8 @@ class VehicleRequestForm extends Component {
       vehicleImages: []
     },
     errors: [],
-    imageStatus: false
+    imageStatus: false,
+    vehicleRequestId: ""
   };
   temp = [];
   schema = {
@@ -65,6 +70,36 @@ class VehicleRequestForm extends Component {
     memberShipDuration: Joi.string().required(),
     vehicleImages: Joi.array().required()
   };
+  componentDidMount() {
+    if (window.location.pathname == "/updateVehicleRequest") {
+      const { vehicleRequest } = this.props.location.state;
+
+      const account = {
+        requester: vehicleRequest.requester._id,
+        vehicleName: vehicleRequest.vehicleName,
+        vehicleModel: vehicleRequest.vehicleModel,
+        vehicleNo: vehicleRequest.vehicleNo,
+        vehicleCompany: vehicleRequest.vehicleCompany,
+        fuelType: vehicleRequest.filesType,
+        vehicleType: vehicleRequest.vehicleType,
+        vehicleColour: vehicleRequest.vehicleColour,
+        seatCapacity: vehicleRequest.vehicleColour,
+        vehicleRent: vehicleRequest.vehicleRent,
+        memberShipDuration: vehicleRequest.memberShipDuration,
+        vehicleImages: vehicleRequest.vehicleImages
+      };
+      this.setState({
+        account,
+        imageStatus: true,
+        vehicleRequestId: vehicleRequest._id
+      });
+    } else {
+      const user = authService.getCurrentUser();
+      const { account } = { ...this.state };
+      account.requester = user._id;
+      this.setState({ account });
+    }
+  }
   validate = () => {
     const options = { abortEarly: false };
     const { error } = Joi.validate(this.state.account, this.schema, options);
@@ -88,13 +123,25 @@ class VehicleRequestForm extends Component {
     console.log("errors", errors);
     if (errors) return;
     try {
-      const vehicleRequest = { ...this.state.account };
-      console.log(vehicleRequest);
-      const response = await addVehicleRequest(vehicleRequest);
-      if (response) {
-        toast.success("Your Request send to Admin Successfully");
-        window.location.href = "/vehicleRequestForm";
+      const { account: vehicleRequest, vehicleRequestId } = this.state;
+      // console.log(vehicleRequest);
+      if (window.location.pathname == "/updateVehicleRequest") {
+        const { data: response } = await updateVehicleRequest(
+          vehicleRequestId,
+          vehicleRequest
+        );
+        if (response) {
+          toast.success("Vehicle Request Successfully");
+          window.location.href = "/vehicleRequests";
+        }
       }
+      // else {
+      //   const { data: response } = await addVehicleRequest(vehicleRequest);
+      //   if (response) {
+      //     toast.success("Your Request send to Admin Successfully");
+      //     window.location.href = "/vehicleRequestForm";
+      //   }
+      // }
     } catch (error) {
       if (error.response && error.response.status === 400)
         toast.error("" + error.response.data);
@@ -132,7 +179,9 @@ class VehicleRequestForm extends Component {
                     color: "#CDCDCD"
                   }}
                 >
-                  Vehicle Request Form
+                  {window.location.pathname == "/updateVehicleRequest"
+                    ? "Update Vehicle Request"
+                    : "Vehicle Request Form"}
                 </h1>
                 <div className="form-group">
                   <Input
@@ -237,13 +286,6 @@ class VehicleRequestForm extends Component {
                   </button>
                 </div>
               </form>
-              {/* <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              
-            </div>
-          </div>
-        </div> */}
             </div>
           </div>
         </div>

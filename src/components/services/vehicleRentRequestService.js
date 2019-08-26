@@ -22,3 +22,6 @@ export async function updateVehicleRentRequest(id, vehicleRentRequest) {
 export async function sendEmail(emailData) {
   return await http.post(baseUrl.concat("sendemail/"), emailData);
 }
+export async function deleteVehicleRentRequest(id) {
+  return await http.delete(apiEndPoint + id);
+}

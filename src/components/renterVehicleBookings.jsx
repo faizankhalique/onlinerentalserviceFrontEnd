@@ -29,27 +29,26 @@ class RenterVehiclesBookings extends Component {
                     <th scope="col">VechileName</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">StartTime</th>
-                    <th scope="col">EndTime</th>
                     <th scope="col">Security</th>
                     <th scope="col">Rent</th>
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">BookingStatus</th>
                   </tr>
                 </thead>
                 <tbody>
                   {vehiclesBookings &&
-                    vehiclesBookings.map(vehiclesBooking => (
-                      <tr key={vehiclesBooking._id}>
-                        <td>{vehiclesBooking.vehicle.vehicleName}</td>
-                        <td>{vehiclesBooking.startDate}</td>
-                        <td>{vehiclesBooking.endDate}</td>
-                        <td>{vehiclesBooking.startTime}</td>
-                        <td>{vehiclesBooking.endTime}</td>
-                        <td>{vehiclesBooking.security}</td>
-                        <td>{vehiclesBooking.rent}</td>
-                        <td>{vehiclesBooking.bookingConfirmation}</td>
-                      </tr>
-                    ))}
+                    vehiclesBookings.map(
+                      vehiclesBooking =>
+                        vehiclesBooking !== "Pending" && (
+                          <tr key={vehiclesBooking._id}>
+                            <td>{vehiclesBooking.vehicle.vehicleName}</td>
+                            <td>{vehiclesBooking.startDate}</td>
+                            <td>{vehiclesBooking.endDate}</td>
+                            <td>{vehiclesBooking.payment.security}</td>
+                            <td>{vehiclesBooking.payment.totalRent}</td>
+                            <td>{vehiclesBooking.bookingStatus}</td>
+                          </tr>
+                        )
+                    )}
                 </tbody>
               </table>
             </div>

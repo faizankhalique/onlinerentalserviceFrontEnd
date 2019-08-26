@@ -104,7 +104,7 @@ class VehicleRentRequestForm extends Component {
     const { account, errors, vehicleImage, vehicle } = this.state;
     return (
       <React.Fragment>
-        <div className="container-fluid">
+        <div className="container-fluid" style={{ marginTop: "25px" }}>
           <div className="row">
             <div className="col-sm-6">
               <form

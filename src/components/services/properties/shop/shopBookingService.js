@@ -4,6 +4,9 @@ const apiEndPoint = baseUrl.concat("shopbooking/");
 export async function getShopRentRequests() {
   return http.get(apiEndPoint + "shopRentRequests");
 }
+export async function getShopBookings() {
+  return http.get(apiEndPoint + "shopbookings");
+}
 export async function getRenterShopRentRequests(id) {
   return http.get(apiEndPoint + "shopRentRequest/" + id);
 }
@@ -27,4 +30,10 @@ export async function sendEmail(emailData) {
 }
 export async function getRenterShopBooking(id) {
   return http.get(apiEndPoint + "/" + id);
+}
+export async function confirmShopBooking(id) {
+  return http.put(apiEndPoint + "confirmbooking/" + id);
+}
+export async function updateShopPayment(id, payment) {
+  return http.put(apiEndPoint + "updatepayment/" + id, payment);
 }

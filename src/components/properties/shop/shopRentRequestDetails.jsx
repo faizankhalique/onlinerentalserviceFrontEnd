@@ -95,7 +95,7 @@ class ShopRentRequestDetails extends Component {
         if (result) {
           toast.success("Request Approved successfuly");
           setTimeout(() => {
-            window.location.href = "/toolRentRequests";
+            window.location.href = "/shopRentRequests";
           }, 1800);
         }
       } catch (error) {

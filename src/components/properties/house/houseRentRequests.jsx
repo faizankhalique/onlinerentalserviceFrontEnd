@@ -13,6 +13,8 @@ class HouseRentRequests extends Component {
     houseRentRequests: [],
     pendingHouseRentRequests: [],
     approvedHouseRentRequests: [],
+    pendingHouseRentRequestsLength: "",
+    approvedHouseRentRequestsLength: "",
     pendingCurrentPage: 1,
     pendingPageSize: 4,
     pendingSearchQuery: "",
@@ -30,10 +32,14 @@ class HouseRentRequests extends Component {
         let approvedHouseRentRequests = houseRentRequests.filter(
           vr => vr.status == "Approved"
         );
+        let pendingHouseRentRequestsLength = pendingHouseRentRequests.length;
+        let approvedHouseRentRequestsLength = approvedHouseRentRequests.length;
         this.setState({
           houseRentRequests,
           pendingHouseRentRequests,
-          approvedHouseRentRequests
+          approvedHouseRentRequests,
+          pendingHouseRentRequestsLength,
+          approvedHouseRentRequestsLength
         });
       }
     } catch (error) {
@@ -114,11 +120,11 @@ class HouseRentRequests extends Component {
   handleDelete = async id => {
     const confirm = window.confirm("Do you want to Delete Request?");
     if (confirm) {
-      const orignalHouseRentRequests = this.state.houseRentRequests;
-      const houseRentRequests = orignalHouseRentRequests.filter(
+      const orignalHouseRentRequests = this.state.pendingHouseRentRequests;
+      const pendingHouseRentRequests = orignalHouseRentRequests.filter(
         hr => hr._id !== id
       );
-      this.setState({ houseRentRequests });
+      this.setState({ pendingHouseRentRequests });
       try {
         const { data: response } = await deleteHouseRentRequest(id);
         if (response) toast.success("House Request Delete Successfuly");
@@ -132,7 +138,7 @@ class HouseRentRequests extends Component {
         else if (error.response && error.response.status === 403)
           toast.error(`Error:403 ${error.response.statusText}`);
         else toast.error(`${error.response.data}`);
-        this.setState({ houseRentRequests: orignalHouseRentRequests });
+        this.setState({ pendingHouseRentRequests: orignalHouseRentRequests });
       }
     }
   };
@@ -145,7 +151,9 @@ class HouseRentRequests extends Component {
       approvedHouseRentRequests,
       approvedCurrentPage,
       approvedPageSize,
-      approvedSearchQuery
+      approvedSearchQuery,
+      pendingHouseRentRequestsLength,
+      approvedHouseRentRequestsLength
     } = this.state;
     let allPendingHouseRentRequests = this.filterPendingHouseRentRequests();
     let allApprovedHouseRentRequests = this.filterApprovedHouseRentRequests();
@@ -254,7 +262,6 @@ class HouseRentRequests extends Component {
                     <th scope="col">EndDate</th>
                     <th scope="col">Status</th>
                     <th scope="col">ApprovedDate</th>
-                    <th />
                   </tr>
                 </thead>
                 <tbody>
@@ -291,12 +298,6 @@ class HouseRentRequests extends Component {
                       <td>{houseRentRequest.endDate}</td>
                       <td>{houseRentRequest.status}</td>
                       <td>{houseRentRequest.ApprovedDate}</td>
-
-                      <td>
-                        <button className="btn btn-sm btn-danger">
-                          Delete
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>

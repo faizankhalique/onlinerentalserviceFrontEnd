@@ -24,7 +24,7 @@ class ProductOwnerLeftNav extends Component {
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <i class="fa fa-envelope-o" aria-hidden="true">
+              <i className="fa fa-envelope-o" aria-hidden="true">
                 {" "}
                 Add Requests
               </i>

@@ -38,7 +38,7 @@ class ShopDetails extends Component {
     return (
       <React.Fragment>
         {shop && (
-          <div className="container-fluid">
+          <div className="container-fluid" style={{ marginTop: "25px" }}>
             <div className="row">
               <div className="col-md-5">
                 <center>
@@ -46,7 +46,10 @@ class ShopDetails extends Component {
                   <h3>Shop Details</h3>
                 </center>
                 <br />
-                <table className="table table-bordered">
+                <table
+                  className="table table-bordered"
+                  style={{ backgroundColor: "white" }}
+                >
                   <thead>
                     <tr>
                       <th>City</th>

@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { getVehiclesRentRequests } from "./services/vehicleRentRequestService";
+import {
+  getVehiclesRentRequests,
+  deleteVehicleRentRequest
+} from "./services/vehicleRentRequestService";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { paginate } from "./../utils/paginate";
@@ -108,6 +111,37 @@ class VehicleRentRequests extends Component {
 
     return paginateApprovedVehicleRentRequests;
   };
+  handelDelete = async id => {
+    const confirm = window.confirm("Do you want to delete this request?");
+    if (confirm) {
+      const orignalVehicleRentRequests = this.state.pendingVehicleRentRequests;
+      const pendingVehicleRentRequests = orignalVehicleRentRequests.filter(
+        vr => vr._id !== id
+      );
+      this.setState({ pendingVehicleRentRequests });
+
+      try {
+        const { data: response } = await deleteVehicleRentRequest(id);
+        if (response) {
+          toast.success("Vehicle Rent Request Delete Successfuly");
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 400)
+          toast.error(`Error:400 ${error.response.data}`);
+        else if (error.response && error.response.status === 404)
+          toast.error(`This Request been deleted:404 Please Refresh the page`);
+        else if (error.response && error.response.status === 401)
+          toast.error(`Error:401 ${error.response.statusText}`);
+        else if (error.response && error.response.status === 403)
+          toast.error(`Error:403 ${error.response.statusText}`);
+        else toast.error(`${error.response.data}`);
+        this.setState({
+          pendingVehicleRentRequests: orignalVehicleRentRequests
+        });
+      }
+    }
+  };
+
   render() {
     const {
       pendingVehicleRentRequests,
@@ -183,7 +217,12 @@ class VehicleRentRequests extends Component {
                       <td>{vehicleRentRequest.requestDate}</td>
 
                       <td>
-                        <button className="btn btn-sm btn-danger">
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => {
+                            this.handelDelete(vehicleRentRequest._id);
+                          }}
+                        >
                           Delete
                         </button>
                       </td>
@@ -221,7 +260,6 @@ class VehicleRentRequests extends Component {
                     <th scope="col">EndDate</th>
                     <th scope="col">Status</th>
                     <th scope="col">ApprovedDate</th>
-                    <th />
                   </tr>
                 </thead>
                 <tbody>
@@ -258,12 +296,6 @@ class VehicleRentRequests extends Component {
                       <td>{vehicleRentRequest.endDate}</td>
                       <td>{vehicleRentRequest.status}</td>
                       <td>{vehicleRentRequest.ApprovedDate}</td>
-
-                      <td>
-                        <button className="btn btn-sm btn-danger">
-                          Delete
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>

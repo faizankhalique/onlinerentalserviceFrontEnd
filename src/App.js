@@ -93,6 +93,12 @@ import OwnerAllVehiclesDetails from "./components/ownerAllVehiclesDetails";
 import OwnerAllHousesDetails from "./components/properties/house/ownerAllHousesDetails";
 import OwnerAllShopsDetails from "./components/properties/shop/ownerAllShopsDetails";
 import OwnerAllToolsDetails from "./components/tools/ownerAllToolsDetails";
+import RenterAllVehiclesBookingsDetails from "./components/renterAllVehiclesBookingsDetails";
+import RenterAllToolsBookingsDetails from "./components/tools/renterAllToolsBookingsDetails";
+import RenterAllHousesBookingsDetails from "./components/properties/house/renterAllHousesBookingsDetails";
+import RenterAllShopsBookingsDetails from "./components/properties/shop/ownerAllShopsBookingsDetails";
+import RenterHousePaymentHistory from "./components/properties/house/renterHousePaymentHistory";
+import RenterShopPaymentHistory from "./components/properties/shop/renterShopPaymentHistory";
 class App extends Component {
   render() {
     const user = authService.getCurrentUser();
@@ -105,7 +111,10 @@ class App extends Component {
         {!user && (
           <React.Fragment>
             <Navbar />
-            <div className="wrapper" style={{ marginTop: "50px" }}>
+            <div
+              className="wrapper"
+              style={{ marginTop: "23px", background: "#E6F2F3" }}
+            >
               {/* page-content */}
               <ToastContainer />
               <br />
@@ -149,7 +158,7 @@ class App extends Component {
                   </div>
                 </div>
               </div> */}
-              <footer
+              {/* <footer
                 className="footer mt-auto py-3"
                 style={{
                   backgroundColor: "#E0E0E0",
@@ -165,6 +174,16 @@ class App extends Component {
                   <span className="text-text-muted">
                     2019 &copy; OnlineRentalService, All Rights Reserved
                   </span>
+                </div>
+              </footer> */}
+              <footer
+                className="footer mt-auto py-4"
+                style={{ backgroundColor: "#2c3e50" }}
+              >
+                <div className="container">
+                  <p className="m-0 text-center text-white">
+                    2019 &copy; OnlineRentalService, All Rights Reserved
+                  </p>
                 </div>
               </footer>
             </div>
@@ -193,7 +212,10 @@ class App extends Component {
             currentPath === "/tools") && (
             <React.Fragment>
               <Navbar />
-              <div className="wrapper" style={{ marginTop: "50px" }}>
+              <div
+                className="wrapper"
+                style={{ marginTop: "23px", background: "#E6F2F3" }}
+              >
                 {/* page-content */}
                 <ToastContainer />
                 <br />
@@ -242,22 +264,11 @@ class App extends Component {
                     </div>
                   </div> */}
 
-                <footer
-                  className="footer mt-auto py-3"
-                  style={{
-                    backgroundColor: "#E0E0E0",
-                    left: "0",
-                    bottom: "0",
-                    width: "100%",
-                    height: "10%",
-                    textAlign: "center"
-                    // position: "fixed"
-                  }}
-                >
+                <footer className="py-4" style={{ backgroundColor: "#2c3e50" }}>
                   <div className="container">
-                    <span className="text-text-muted">
+                    <p className="m-0 text-center text-white">
                       2019 &copy; OnlineRentalService, All Rights Reserved
-                    </span>
+                    </p>
                   </div>
                 </footer>
               </div>
@@ -283,7 +294,7 @@ class App extends Component {
             currentPath === "/logOut") && (
             <React.Fragment>
               {/* <Navbar /> */}
-              <div className="wrapper">
+              <div className="wrapper" style={{ background: "#E6F2F3" }}>
                 {/* sidebar */}
                 <div className="left-nav">
                   <ProductOwnerLeftNav />
@@ -335,6 +346,16 @@ class App extends Component {
                     <Route path="/logOut" component={LogOut} />
                   </Switch>
                 </div>
+                {/* <footer
+                  className="footer mt-auto py-4"
+                  style={{ backgroundColor: "#2c3e50" }}
+                >
+                  <div className="container">
+                    <p className="m-0 text-center text-white">
+                      2019 &copy; OnlineRentalService, All Rights Reserved
+                    </p>
+                  </div>
+                </footer> */}
               </div>
             </React.Fragment>
           )}
@@ -350,10 +371,12 @@ class App extends Component {
             currentPath === "/renterShopBookings" ||
             currentPath === "/renterToolsRequestsHistory" ||
             currentPath === "/renterToolBookings" ||
+            currentPath === "/renterHousePaymentHistory" ||
+            currentPath === "/renterShopPaymentHistory" ||
             currentPath === "/logOut") && (
             <React.Fragment>
               {/* <Navbar /> */}
-              <div className="wrapper">
+              <div className="wrapper" style={{ background: "#E6F2F3" }}>
                 {/* sidebar */}
                 <div className="left-nav">
                   <RenterLeftNav />
@@ -399,8 +422,26 @@ class App extends Component {
                       path="/renterToolBookings"
                       component={RenterToolsBookings}
                     />
+                    <Route
+                      path="/renterHousePaymentHistory"
+                      component={RenterHousePaymentHistory}
+                    />
+                    <Route
+                      path="/renterShopPaymentHistory"
+                      component={RenterShopPaymentHistory}
+                    />
                   </Switch>
                 </div>
+                {/* <footer
+                  className="footer mt-auto py-4"
+                  style={{ backgroundColor: "#2c3e50" }}
+                >
+                  <div className="container">
+                    <p className="m-0 text-center text-white">
+                      2019 &copy; OnlineRentalService, All Rights Reserved
+                    </p>
+                  </div>
+                </footer> */}
               </div>
             </React.Fragment>
           )}
@@ -410,6 +451,7 @@ class App extends Component {
           user.accountType === "admin" &&
           (currentPath === "/admin" ||
             currentPath === "/vehicleRequests" ||
+            currentPath === "/updateVehicleRequest" ||
             currentPath === "/vehicleRequestDetails" ||
             currentPath === "/vehicleRentRequests" ||
             currentPath === "/vehicleRentRequestDetails" ||
@@ -450,11 +492,15 @@ class App extends Component {
             currentPath === "/ownerAllHousesDetails" ||
             currentPath === "/ownerAllShopsDetails" ||
             currentPath === "/ownerAllToolsDetails" ||
+            currentPath === "/renterAllVehiclesBookingsDetails" ||
+            currentPath === "/renterAllHousesBookingsDetails" ||
+            currentPath === "/renterAllShopsBookingsDetails" ||
+            currentPath === "/renterAllToolsBookingsDetails" ||
             currentPath === "/reports" ||
             currentPath === "/logOut") && (
             <React.Fragment>
               {/* <Navbar /> */}
-              <div className="wrapper">
+              <div className="wrapper" style={{ background: "#E6F2F3" }}>
                 {/* sidebar */}
                 <div className="left-nav">
                   <AdminLeftNav />
@@ -471,7 +517,10 @@ class App extends Component {
                       path="/vehicleRequests"
                       component={VehicleRequests}
                     />
-
+                    <Route
+                      path="/updateVehicleRequest"
+                      component={VehicleRequestForm}
+                    />
                     <Route
                       path="/vehicleRequestDetails"
                       component={VehicleRequestDetails}
@@ -591,6 +640,23 @@ class App extends Component {
                       path="/ownerAllToolsDetails"
                       component={OwnerAllToolsDetails}
                     />
+                    <Route
+                      path="/renterAllVehiclesBookingsDetails"
+                      component={RenterAllVehiclesBookingsDetails}
+                    />
+                    <Route
+                      path="/renterAllToolsBookingsDetails"
+                      component={RenterAllToolsBookingsDetails}
+                    />
+                    <Route
+                      path="/renterAllHousesBookingsDetails"
+                      component={RenterAllHousesBookingsDetails}
+                    />
+                    <Route
+                      path="/renterAllShopsBookingsDetails"
+                      component={RenterAllShopsBookingsDetails}
+                    />
+
                     <Route path="/userProfile" component={UserProfile} />
                     <Route path="/owners" component={Owners} />
                     <Route path="/renters" component={Renters} />
@@ -598,6 +664,16 @@ class App extends Component {
                     <Route path="/logOut" component={LogOut} />
                   </Switch>
                 </div>
+                {/* <footer
+                  className="footer mt-auto py-4"
+                  style={{ backgroundColor: "#2c3e50" }}
+                >
+                  <div className="container">
+                    <p className="m-0 text-center text-white">
+                      2019 &copy; OnlineRentalService, All Rights Reserved
+                    </p>
+                  </div>
+                </footer> */}
               </div>
             </React.Fragment>
           )}
@@ -611,6 +687,7 @@ class App extends Component {
           currentPath !== "/shops" &&
           currentPath !== "/contactUs" &&
           currentPath !== "/vehicleRequestForm" &&
+          currentPath !== "/updateVehicleRequest" &&
           currentPath !== "/vehicleRequestDetails" &&
           currentPath !== "/vehicleRequests" &&
           currentPath !== "/vehicleRentRequests" &&
@@ -684,6 +761,12 @@ class App extends Component {
           currentPath !== "/ownerAllHousesDetails" &&
           currentPath !== "/ownerAllToolsDetails" &&
           currentPath !== "/ownerAllShopsDetails" &&
+          currentPath !== "/renterAllVehiclesBookingsDetails" &&
+          currentPath !== "/renterAllHousesBookingsDetails" &&
+          currentPath !== "/renterAllShopsBookingsDetails" &&
+          currentPath !== "/renterAllToolsBookingsDetails" &&
+          currentPath !== "/renterHousePaymentHistory" &&
+          currentPath !== "/renterShopPaymentHistory" &&
           currentPath !== "/vehicleRentRequestForm" && (
             <React.Fragment>
               <div

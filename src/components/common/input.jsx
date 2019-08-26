@@ -8,7 +8,8 @@ const Input = ({
   pattern,
   placeholder,
   errors,
-  color
+  color,
+  readonly
 }) => {
   return (
     <div className="form-group">
@@ -34,6 +35,7 @@ const Input = ({
         onChange={onChange}
         pattern={pattern}
         required
+        // readonly={readonly}
       />
       {errors ? <div className="alert alert-danger">{errors}</div> : ""}
     </div>

@@ -28,21 +28,24 @@ class RenterToolsBookings extends Component {
                     <th scope="col">EndDate</th>
                     <th scope="col">Security</th>
                     <th scope="col">Rent</th>
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {toolBookings &&
-                    toolBookings.map(toolBooking => (
-                      <tr key={toolBooking._id}>
-                        <td>{toolBooking.tool.toolName}</td>
-                        <td>{toolBooking.startDate}</td>
-                        <td>{toolBooking.endDate}</td>
-                        <td>{toolBooking.security}</td>
-                        <td>{toolBooking.rent}</td>
-                        <td>{toolBooking.bookingConfirmation}</td>
-                      </tr>
-                    ))}
+                    toolBookings.map(
+                      toolBooking =>
+                        toolBooking.bookingStatus !== "Pending" && (
+                          <tr key={toolBooking._id}>
+                            <td>{toolBooking.tool.toolName}</td>
+                            <td>{toolBooking.startDate}</td>
+                            <td>{toolBooking.endDate}</td>
+                            <td>{toolBooking.payment.security}</td>
+                            <td>{toolBooking.payment.totalRent}</td>
+                            <td>{toolBooking.bookingStatus}</td>
+                          </tr>
+                        )
+                    )}
                 </tbody>
               </table>
             </div>

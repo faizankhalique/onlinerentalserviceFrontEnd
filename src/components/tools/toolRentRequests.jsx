@@ -114,11 +114,11 @@ class ToolRentRequests extends Component {
   handleDelete = async id => {
     const confirm = window.confirm("Do you want to Delete Request?");
     if (confirm) {
-      const orignalToolRentRequests = this.state.toolRentRequests;
-      const toolRentRequests = orignalToolRentRequests.filter(
+      const orignalToolRentRequests = this.state.pendingToolRentRequests;
+      const pendingToolRentRequests = orignalToolRentRequests.filter(
         hr => hr._id !== id
       );
-      this.setState({ toolRentRequests });
+      this.setState({ pendingToolRentRequests });
       try {
         const { data: response } = await deleteToolRentRequest(id);
         if (response) toast.success("tool Request Delete Successfuly");
@@ -132,7 +132,7 @@ class ToolRentRequests extends Component {
         else if (error.response && error.response.status === 403)
           toast.error(`Error:403 ${error.response.statusText}`);
         else toast.error(`${error.response.data}`);
-        this.setState({ toolRentRequests: orignalToolRentRequests });
+        this.setState({ pendingToolRentRequests: orignalToolRentRequests });
       }
     }
   };
@@ -254,7 +254,6 @@ class ToolRentRequests extends Component {
                     <th scope="col">EndDate</th>
                     <th scope="col">Status</th>
                     <th scope="col">ApprovedDate</th>
-                    <th />
                   </tr>
                 </thead>
                 <tbody>
@@ -291,12 +290,6 @@ class ToolRentRequests extends Component {
                       <td>{toolRentRequest.endDate}</td>
                       <td>{toolRentRequest.status}</td>
                       <td>{toolRentRequest.ApprovedDate}</td>
-
-                      <td>
-                        <button className="btn btn-sm btn-danger">
-                          Delete
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -70,10 +70,9 @@ class ShopRentRequestForm extends Component {
     const date1 = new Date(account.startDate + ",00:00");
     const date2 = new Date(account.endDate + ",00:00");
     let months = 0;
-
     if (date2 > date1) {
       months = parseInt(diff_months(date2, date1));
-      if (months === 1) months = 1;
+      if (months === 0) months = 1;
     } else if (date1 > date2) {
       toast.error("endDate must be greater than  startdate.");
       return;
@@ -105,7 +104,7 @@ class ShopRentRequestForm extends Component {
     const { account, errors, shopImage, shopImages, shop } = this.state;
     return (
       <React.Fragment>
-        <div className="container-fluid">
+        <div className="container-fluid" style={{ marginTop: "25px" }}>
           <div className="row">
             <div className="col-sm-6">
               <form

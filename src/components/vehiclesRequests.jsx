@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { getVehiclesRequests } from "./services/vehicleRequestService";
+import {
+  getVehiclesRequests,
+  deleteVehicleRequest
+} from "./services/vehicleRequestService";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Pagination from "./common/pagination";
@@ -115,6 +118,31 @@ class VehicleRequests extends Component {
 
     return paginateApprovedVehicleRequests;
   };
+  handleDelete = async id => {
+    const confirm = window.confirm("Do you want to Delete Request?");
+    if (confirm) {
+      const orignalVehicleRequests = this.state.pendingVehicleRequests;
+      const pendingVehicleRequests = orignalVehicleRequests.filter(
+        vr => vr._id !== id
+      );
+      this.setState({ pendingVehicleRequests });
+      try {
+        const { data: response } = await deleteVehicleRequest(id);
+        if (response) toast.success("House Request Delete Successfuly");
+      } catch (error) {
+        if (error.response && error.response.status === 400)
+          toast.error(`Error:400 ${error.response.data}`);
+        else if (error.response && error.response.status === 404)
+          toast.error(`This Request been deleted:404 (not found)`);
+        else if (error.response && error.response.status === 401)
+          toast.error(`Error:401 ${error.response.statusText}`);
+        else if (error.response && error.response.status === 403)
+          toast.error(`Error:403 ${error.response.statusText}`);
+        else toast.error(`${error.response.data}`);
+        this.setState({ pendingVehicleRequests: orignalVehicleRequests });
+      }
+    }
+  };
   render() {
     const {
       pendingVehicleRequests,
@@ -132,44 +160,34 @@ class VehicleRequests extends Component {
     let allApprovedVehicleRequests = this.filterApprovedVehicleRequests();
     return (
       <React.Fragment>
-        <div className="container" style={{ background: "#E6F2F3" }}>
-          <div className="row">
-            <div
-              className="col-sm-4 card"
-              style={{
-                background: "white",
-                height: "150px",
-                marginLeft: "30px",
-                marginTop: "10px"
-              }}
-            >
-              <h4 style={{ marginTop: "30px" }}>
-                {" "}
-                Pending Requests: {pendingRequestsLength}
-              </h4>
-            </div>
-            <div
-              className="col-sm-4 card"
-              style={{
-                background: "white",
-                height: "150px",
-                marginLeft: "290px",
-                marginTop: "10px"
-              }}
-            >
-              <h4 style={{ marginTop: "30px" }}>
-                {" "}
-                Approved Requests: {approvedRequestsLength}
-              </h4>
+        <div className="container">
+          <div className="row" style={{ marginTop: "8px" }}>
+            <div className="col-lg-4 col-md-4 col-sm-6 mb-4">
+              <div className="card h-70">
+                <div className="card-body">
+                  {/* <h4 className="card-title">
+                    <Link to="#">Vehicles</Link>
+                  </h4> */}
+                  <p className="card-text">
+                    <h5 style={{ fontFamily: "Book Antiqua" }}>
+                      Pending Requests: {pendingRequestsLength}
+                    </h5>
+
+                    <h5
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      Approved Requests: {approvedRequestsLength}
+                    </h5>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
+
           <div
-            className="row card"
+            className="row"
             style={{
-              background: "white",
-              marginTop: "30px",
-              marginLeft: "10px",
-              marginRight: "10px"
+              marginTop: "30px"
             }}
           >
             <div className="col-lg-12">
@@ -183,7 +201,7 @@ class VehicleRequests extends Component {
                   onChange={this.handlePendingSearch}
                 />
               </div>
-              <table className="table">
+              <table className="table" style={{ backgroundColor: "white" }}>
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
@@ -230,12 +248,26 @@ class VehicleRequests extends Component {
                       <td>{vehicleRequest.status}</td>
                       <td>{vehicleRequest.requestDate}</td>
                       <td>
-                        <button className="btn btn-primary btn-sm">
-                          Update
-                        </button>
+                        <Link
+                          to={{
+                            pathname: "/updateVehicleRequest",
+                            state: {
+                              vehicleRequest: vehicleRequest
+                            }
+                          }}
+                        >
+                          <button className="btn btn-primary btn-sm">
+                            Update
+                          </button>
+                        </Link>
                       </td>
                       <td>
-                        <button className="btn btn-danger btn-sm">
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => {
+                            this.handleDelete(vehicleRequest._id);
+                          }}
+                        >
                           Delete
                         </button>
                       </td>
@@ -252,12 +284,9 @@ class VehicleRequests extends Component {
             </div>
           </div>
           <div
-            className="row card"
+            className="row"
             style={{
-              background: "white",
-              marginTop: "30px",
-              marginLeft: "10px",
-              marginRight: "10px"
+              marginTop: "30px"
             }}
           >
             <div className="col-lg-12">
@@ -271,7 +300,7 @@ class VehicleRequests extends Component {
                   onChange={this.handleApprovedSearch}
                 />
               </div>
-              <table className="table">
+              <table className="table" style={{ backgroundColor: "white" }}>
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
@@ -281,7 +310,6 @@ class VehicleRequests extends Component {
                     <th scope="col">MemberShip</th>
                     <th scope="col">Status</th>
                     <th scope="col">ApprovedDate</th>
-                    <th />
                   </tr>
                 </thead>
                 <tbody>
@@ -299,29 +327,12 @@ class VehicleRequests extends Component {
                           {vehicleRequest.requester.fullName}
                         </Link>
                       </td>
-                      <td>
-                        {/* <Link
-                              to={{
-                                pathname: "/vehicleRequestDetails",
-                                state: {
-                                  vehicleRequest: vehicleRequest
-                                }
-                              }}
-                            >
-                            </Link> */}
-                        {vehicleRequest.vehicleName}
-                      </td>
+                      <td>{vehicleRequest.vehicleName}</td>
                       <td>{vehicleRequest.vehicleModel}</td>
                       <td>{vehicleRequest.vehicleRent}</td>
                       <td>{vehicleRequest.memberShipDuration}</td>
                       <td>{vehicleRequest.status}</td>
                       <td>{vehicleRequest.ApprovedDate}</td>
-
-                      <td>
-                        <button className="btn btn-danger btn-sm">
-                          Delete
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>

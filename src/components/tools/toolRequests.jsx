@@ -150,6 +150,28 @@ class ToolRequests extends Component {
     return (
       <React.Fragment>
         <div className="container">
+          <div className="row" style={{ marginTop: "8px" }}>
+            <div className="col-lg-4 col-md-4 col-sm-6 mb-4">
+              <div className="card h-70">
+                <div className="card-body">
+                  {/* <h4 className="card-title">
+                    <Link to="#">Vehicles</Link>
+                  </h4> */}
+                  <p className="card-text">
+                    <h5 style={{ fontFamily: "Book Antiqua" }}>
+                      Pending Requests: {pendingToolRequests.length}
+                    </h5>
+
+                    <h5
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      Approved Requests: {approvedToolRequests.length}
+                    </h5>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="row">
             <div className="col-lg-12">
               <center>
@@ -162,7 +184,7 @@ class ToolRequests extends Component {
                   onChange={this.handlePendingSearch}
                 />
               </div>
-              <table className="table">
+              <table className="table" style={{ backgroundColor: "white" }}>
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
@@ -256,7 +278,7 @@ class ToolRequests extends Component {
                   onChange={this.handleApprovedSearch}
                 />
               </div>
-              <table className="table">
+              <table className="table" style={{ backgroundColor: "white" }}>
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
@@ -266,8 +288,6 @@ class ToolRequests extends Component {
                     <th scope="col">MemberShip</th>
                     <th scope="col">Status</th>
                     <th scope="col">ApprovedDate</th>
-                    <th />
-                    <th />
                   </tr>
                 </thead>
                 <tbody>
@@ -303,21 +323,6 @@ class ToolRequests extends Component {
                       <td>{toolRequest.memberShipDuration}</td>
                       <td>{toolRequest.status}</td>
                       <td>{toolRequest.ApprovedDate}</td>
-                      <td>
-                        <button className="btn btn-primary btn-sm" disabled>
-                          Update
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => {
-                            this.handleDelete(toolRequest._id);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -6,13 +6,21 @@ import { Link } from "react-router-dom";
 import { paginate } from "./../utils/paginate";
 import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
+import { getProductsData } from "./services/reportService";
 class Owners extends Component {
-  state = { ownersDetails: [], currentPage: 1, pageSize: 5, searchQuery: "" };
+  state = {
+    ownersDetails: [],
+    productsDetails: {},
+    currentPage: 1,
+    pageSize: 4,
+    searchQuery: ""
+  };
   async componentDidMount() {
     try {
       const { data: ownersDetails } = await getOwnersDetails();
       if (ownersDetails) {
-        this.setState({ ownersDetails });
+        const { data: productsDetails } = await getProductsData();
+        this.setState({ ownersDetails, productsDetails });
       }
     } catch (error) {
       toast.error("" + error);
@@ -41,11 +49,123 @@ class Owners extends Component {
     return paginateOwner;
   };
   render() {
-    const { ownersDetails, pageSize, currentPage, searchQuery } = this.state;
+    const {
+      ownersDetails,
+      productsDetails,
+      pageSize,
+      currentPage,
+      searchQuery
+    } = this.state;
     const allOwnersDetails = this.filterOwner();
     return (
       <React.Fragment>
         <div className="container" style={{ background: "#E6F2F3" }}>
+          <div className="row" style={{ marginTop: "8px" }}>
+            <div className="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div className="card h-70">
+                <div className="card-body">
+                  <h4 className="card-title">
+                    <Link to="#">Vehicles</Link>
+                  </h4>
+                  <p className="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      Total: {productsDetails.totalVehicles}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      OnRent: {productsDetails.totalVehiclesOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      Free: {productsDetails.totalVehiclesFree}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div className="card h-70">
+                <div className="card-body">
+                  <h4 className="card-title">
+                    <Link to="#">Houses</Link>
+                  </h4>
+                  <p className="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      Total: {productsDetails.totalHouses}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      OnRent: {productsDetails.totalHousesOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      Free: {productsDetails.totalHousesFree}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div className="card h-70">
+                <div className="card-body">
+                  <h4 className="card-title">
+                    <Link to="#">Shops</Link>
+                  </h4>
+                  <p className="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      Total: {productsDetails.totalShops}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      OnRent: {productsDetails.totalShopsOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      Free: {productsDetails.totalShopsFree}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div className="card h-70">
+                <div className="card-body">
+                  <h4 className="card-title">
+                    <Link to="#">Tools</Link>
+                  </h4>
+                  <p className="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      Total: {productsDetails.totalTools}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      OnRent: {productsDetails.totalToolsOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      Free: {productsDetails.totalToolsFree}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="row">
             <div className="col-lg-12">
               <div style={{ marginLeft: "870px" }}>

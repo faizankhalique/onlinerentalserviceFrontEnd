@@ -1,19 +1,42 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { getToolRentRequests } from "../services/tools/toolBookingService";
+import {
+  confirmToolBooking,
+  getToolBookings
+} from "../services/tools/toolBookingService";
+import { addToolBooking } from "../services/allRegisterRenters";
 class ToolBookings extends Component {
   state = { toolBookings: [] };
   async componentDidMount() {
     try {
-      const { data: toolBookings } = await getToolRentRequests();
+      const { data: toolBookings } = await getToolBookings();
       if (toolBookings) this.setState({ toolBookings });
     } catch (error) {
       toast.error("" + error);
     }
   }
-  handleBooking = requestId => {
-    toast.success(requestId);
+  handleBooking = async (bookingId, renterId) => {
+    try {
+      const confirm = window.confirm("Do you want to confirm Tool Booking?");
+      if (confirm) {
+        const { data } = await confirmToolBooking(bookingId);
+        if (data) {
+          toast.success("Tool Booking Confirm successfully");
+          const { data: result2 } = await addToolBooking({
+            bookingId: bookingId,
+            renterId: renterId
+          });
+          if (result2)
+            toast.success("Booking add into AllRegisterRenters Successfully");
+          setTimeout(() => {
+            window.location.pathname = "/renters";
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      toast.error(error + "");
+    }
   };
   handleDelete = requestId => {
     const isConfim = window.confirm("Do you want to Delete?");
@@ -38,7 +61,7 @@ class ToolBookings extends Component {
                     <th scope="col">EndDate</th>
                     <th scope="col">Security</th>
                     <th scope="col">Rent</th>
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">BookingStatus</th>
                     <th />
                     <th />
                   </tr>
@@ -47,7 +70,7 @@ class ToolBookings extends Component {
                   {toolBookings &&
                     toolBookings.map(
                       toolBooking =>
-                        toolBooking.bookingConfirmation == "Pending" && (
+                        toolBooking.bookingStatus == "Pending" && (
                           <tr key={toolBooking._id}>
                             <td>
                               <Link
@@ -65,27 +88,21 @@ class ToolBookings extends Component {
                             <td>{toolBooking.owner.fullName}</td>
                             <td>{toolBooking.startDate}</td>
                             <td>{toolBooking.endDate}</td>
-                            <td>{toolBooking.security}</td>
-                            <td>{toolBooking.rent}</td>
-                            <td>{toolBooking.bookingConfirmation}</td>
+                            <td>{toolBooking.payment.security}</td>
+                            <td>{toolBooking.payment.totalRent}</td>
+                            <td>{toolBooking.bookingStatus}</td>
                             <td>
-                              <Link
-                                to={{
-                                  pathname: "/confirmToolBooking",
-                                  state: {
-                                    toolBooking: toolBooking
-                                  }
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => {
+                                  this.handleBooking(
+                                    toolBooking._id,
+                                    toolBooking.renter._id
+                                  );
                                 }}
                               >
-                                <button
-                                  className="btn btn-primary btn-sm"
-                                  // onClick={() => {
-                                  //   this.handleBooking(toolBooking._id);
-                                  // }}
-                                >
-                                  Confirm
-                                </button>
-                              </Link>
+                                Confirm
+                              </button>
                             </td>
                             <td>
                               <button
@@ -104,7 +121,7 @@ class ToolBookings extends Component {
               </table>
             </div>
           </div>
-          <div className="row">
+          {/* <div className="row">
             <h3 style={{ marginLeft: "350px" }}>Confirm Booking Table</h3>
 
             <div className="col-lg-12">
@@ -118,7 +135,7 @@ class ToolBookings extends Component {
                     <th scope="col">EndDate</th>
                     <th scope="col">Security</th>
                     <th scope="col">Rent</th>
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">BookingStatus</th>
                     <th />
                     <th />
                   </tr>
@@ -127,7 +144,7 @@ class ToolBookings extends Component {
                   {toolBookings &&
                     toolBookings.map(
                       toolBooking =>
-                        toolBooking.bookingConfirmation == "Confirm" && (
+                        toolBooking.bookingStatus == "Confirm" && (
                           <tr key={toolBooking._id}>
                             <td>
                               <Link
@@ -145,27 +162,21 @@ class ToolBookings extends Component {
                             <td>{toolBooking.owner.fullName}</td>
                             <td>{toolBooking.startDate}</td>
                             <td>{toolBooking.endDate}</td>
-                            <td>{toolBooking.security}</td>
-                            <td>{toolBooking.rent}</td>
-                            <td>{toolBooking.bookingConfirmation}</td>
+                            <td>{toolBooking.payment.security}</td>
+                            <td>{toolBooking.payment.totalRent}</td>
+                            <td>{toolBooking.bookingStatus}</td>
                             <td>
-                              <Link
-                                to={{
-                                  pathname: "/confirmToolBooking",
-                                  state: {
-                                    toolBooking: toolBooking
-                                  }
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => {
+                                  this.handleBooking(
+                                    toolBooking._id,
+                                    toolBooking.renter._id
+                                  );
                                 }}
                               >
-                                <button
-                                  className="btn btn-primary btn-sm"
-                                  // onClick={() => {
-                                  //   this.handleBooking(toolBooking._id);
-                                  // }}
-                                >
-                                  Update
-                                </button>
-                              </Link>
+                                Update
+                              </button>
                             </td>
                             <td>
                               <button
@@ -183,7 +194,7 @@ class ToolBookings extends Component {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
         </div>
       </React.Fragment>
     );

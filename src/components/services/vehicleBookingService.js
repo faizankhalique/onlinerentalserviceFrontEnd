@@ -13,3 +13,6 @@ export async function updateVehiclesBookings(id, vehicleBookingData) {
 export async function getVehicleBooking(id) {
   return http.get(apiEndPoint + "vehiclebooking/" + id);
 }
+export async function confirmVehicleBooking(id) {
+  return http.put(apiEndPoint + "confirmbooking/" + id);
+}

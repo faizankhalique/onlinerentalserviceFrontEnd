@@ -1,275 +1,84 @@
 import React, { Component } from "react";
-import Input from "./../../common/input";
-import Joi from "joi-browser";
-import { getRenterShopBooking } from "../../services/properties/shop/shopBookingService";
+
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import {
-  addShopPayment,
-  getRenterShopPayment
-} from "../../services/allRegisterRenters";
+import { updateShopPayment } from "../../services/properties/shop/shopBookingService";
+
 class ShopPayments extends Component {
   state = {
-    account: {
-      rent: "",
-      security: "",
-      commission: "",
-      month: ""
-    },
-    errors: [],
-    shopBooking: {},
-    shopImage: "",
-    shopImages: [],
-    shop: {},
-    rents: [],
-    renterId: "",
-    shopPaymentId: ""
+    payments: [],
+    shopBookingId: ""
   };
-  schema = {
-    rent: Joi.number()
-      .min(0)
-      .required(),
-    month: Joi.number()
-      .min(0)
-      .required(),
-    security: Joi.number()
-      .min(0)
-      .required(),
-    commission: Joi.number()
-      .min(0)
-      .required()
-  };
+
   async componentDidMount() {
-    try {
-      const {
-        renterId,
-        shopPaymentId,
-        shopBookingId,
-        security
-      } = this.props.location.state;
-      const { data: shopBooking } = await getRenterShopBooking(shopBookingId);
-      if (shopBooking) {
-        const { data: rents } = await getRenterShopPayment(renterId);
-        const account = { ...this.state.account };
-        const monthlyRent = shopBooking.shop.monthlyRent;
-        account.security = security;
-        account.rent = monthlyRent;
-        account.commission = parseInt(monthlyRent * 0.2);
-        if (rents && rents.length > 0) {
-          // alert(rents[0].month);
-          account.month = parseInt(rents[rents.length - 1].month) + 1;
-        } else {
-          account.month = 1;
-        }
-        this.setState({
-          account,
-          shopBooking,
-          shopImage: shopBooking.shop.shopImages[0],
-          shopImages: shopBooking.shop.shopImages,
-          shop: shopBooking.shop,
-          renterId: renterId,
-          shopPaymentId,
-          rents
-        });
-      }
-    } catch (error) {
-      toast.error(error + "");
-    }
+    const { payments, shopBookingId } = this.props.location.state;
+    this.setState({ payments, shopBookingId });
   }
-  validate = () => {
-    const options = { abortEarly: false };
-    const { error } = Joi.validate(this.state.account, this.schema, options);
-    if (!error) return null;
-    const errors = {};
-    for (const item of error.details) {
-      errors[item.path[0]] = item.message;
-    }
-    return errors;
-  };
-  handleChange = e => {
-    const { currentTarget: input } = e;
-    const account = { ...this.state.account };
-    account[input.name] = input.value;
-    this.setState({ account });
-  };
-  handleSubmit = async e => {
-    e.preventDefault();
-    const errors = this.validate();
-    this.setState({ errors: errors || {} });
-    console.log("errors", errors);
-    if (errors) return;
+  handlePayment = async paymentId => {
     try {
-      const { renterId, account } = this.state;
-      const { data: response } = await addShopPayment(renterId, account);
-      if (response) {
-        toast.success("Payment add successfully");
+      const confirm = window.confirm("Do you want payment to Owner?");
+      if (confirm) {
+        const shopBookingId = this.state.shopBookingId;
+        const { data } = await updateShopPayment(shopBookingId, {
+          paymentId: paymentId
+        });
+        if (data) {
+          toast.success("payment update Successfuly");
+          setTimeout(() => {
+            window.location.pathname = "/shopPayments";
+          }, 1500);
+        }
       }
     } catch (error) {
       toast.error(error + "");
     }
-  };
-  handleImage = image => {
-    this.setState({ shopImage: image });
   };
   render() {
-    const {
-      account,
-      errors,
-      shopImage,
-      shopImages,
-      shopBooking,
-      shop,
-      rents
-    } = this.state;
+    const { payments } = this.state;
     return (
       <React.Fragment>
-        <div className="container">
-          {shopBooking && (
-            <div className="row" style={{ padding: "4px" }}>
-              <div className="col-md-6">
-                <center>
-                  {" "}
-                  <h3>Shop Booking Details</h3>
-                </center>
-                <br />
-                <table className="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>Shop Location</th>
-                      <td>
-                        <Link
-                          to={{
-                            pathname: "/shopDetails",
-                            state: {
-                              shopId: shop._id,
-                              admin: true
-                            }
-                          }}
-                        >
-                          {shop.location}
-                        </Link>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <th>StartDate</th>
-                      <td> {shopBooking.startDate}</td>
-                    </tr>
-                    <tr>
-                      <th>EndDate</th>
-                      <td> {shopBooking.endDate}</td>
-                    </tr>
-
-                    <tr>
-                      <th>Request-Status</th>
-                      <td>{shopBooking.status}</td>
-                    </tr>
-                    <tr>
-                      <th>RequestDate</th>
-                      <td>{shopBooking.requestDate}</td>
-                    </tr>
-                    <tr>
-                      <th>RequestTime</th>
-                      <td>{shopBooking.requestTime}</td>
-                    </tr>
-                  </thead>
-                </table>
-                <div />
-              </div>
-              <div className="col-md-4" style={{ marginTop: "65px" }}>
-                <img
-                  src={shopImage}
-                  style={{ height: "400px", width: "500px" }}
-                />
-                <br />
-                <br />
-                {shopBooking &&
-                  shopImages.map(image => (
-                    <img
-                      key={image}
-                      src={image}
-                      style={{ height: "50px", width: "50px", margin: "8px" }}
-                      onClick={() => {
-                        this.handleImage(image);
-                      }}
-                    />
-                  ))}
-              </div>
-            </div>
-          )}
+        <div className="container-fluid">
           <div className="row">
-            <div className="col-sm-6">
-              <form
-                onSubmit={this.handleSubmit}
-                className="card"
-                style={{
-                  background: "#E6F2F3",
-                  boxSizing: " border-box",
-                  maxWidth: "900px",
-                  // marginLeft: "100px",
-                  padding: "10px"
-                }}
-              >
-                <h5
-                  style={{
-                    fontFamily: "Arial, Helvetica, sans-serif",
-                    marginLeft: "100px"
-                  }}
-                >
-                  shop Payment Form
-                </h5>
-                <div className="form-group">
-                  <Input
-                    label="Security"
-                    name="security"
-                    type="number"
-                    value={account.security}
-                    onChange={this.handleChange}
-                    errors={errors.security}
-                    color="black"
-                  />
-                  <Input
-                    label="Month No"
-                    name="month"
-                    type="number"
-                    value={account.month}
-                    onChange={this.handleChange}
-                    errors={errors.month}
-                    color="black"
-                  />
-                  <Input
-                    label="Rent"
-                    name="rent"
-                    type="number"
-                    value={account.rent}
-                    onChange={this.handleChange}
-                    errors={errors.rent}
-                    color="black"
-                  />
-
-                  <button type="submit" className="btn btn-primary">
-                    Add
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div className="col-sm-6">
-              <table className="table table-bordered">
+            <div className="col-lg-12">
+              <table className="table">
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">Month</th>
-                    <th scope="col">Rent</th>
-                    <th scope="col">Commission</th>
-                    <th scope="col">Date</th>
+                    <th scope="col">MonthlyRent</th>
+                    <th scope="col">Commissinon</th>
+                    <th scope="col">OwnerRent</th>
+                    <th scope="col">RecieveDate</th>
+                    <th scope="col">PaidToOwnerStatus</th>
+                    <th scope="col">PaidToOwnerDate</th>
+                    {/* <th scope="col">Update</th> */}
+                    <th scope="col">PeymentToOwner</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rents.map(rent => (
-                    <tr key={Math.random}>
-                      <td>{rent.month}</td>
-                      <td>{rent.rent}</td>
-                      <td>{rent.commission}</td>
-                      <td>{rent.date}</td>
+                  {payments.map(payment => (
+                    <tr key={payment._id}>
+                      <td>{payment.currentMonth}</td>
+                      <td>{payment.monthlyRent}</td>
+                      <td>{payment.monthlyCommission}</td>
+                      <td>{payment.ownerMonthlyRent}</td>
+                      <td>{payment.paymentDate}</td>
+                      <td>{payment.paidToOwnerStatus.toString()}</td>
+                      <td>{payment.paidToOwnerDate}</td>
+                      {/* <td>
+                        <button className="btn btn-sm btn-primary">
+                          Update
+                        </button>
+                      </td> */}
+                      <td>
+                        <button
+                          className="btn btn-sm btn-primary"
+                          onClick={() => {
+                            this.handlePayment(payment._id);
+                          }}
+                        >
+                          PaidToOwner
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

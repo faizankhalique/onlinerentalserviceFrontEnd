@@ -1,60 +1,67 @@
 import React, { Component } from "react";
-
 import Joi from "joi-browser";
 import diff_days from "../../utils/diff_days";
 import { toast } from "react-toastify";
 import { updateToolBooking } from "../services/tools/toolBookingService";
 import { addToolBooking } from "../services/allRegisterRenters";
 import Input from "./../common/input";
+import Select from "./../common/select";
 class ConfirmToolBooking extends Component {
   state = {
     account: {
       renterName: "",
       toolName: "",
+      toolId: "",
+      bookingStatus: "",
       startDate: "",
       endDate: "",
-      rent: "",
+      totalRent: "",
+      totalDays: "",
       security: "",
-      commission: ""
+      commission: "",
+      ownerRent: ""
     },
     errors: [],
     bookingId: "",
     renterId: "",
-    dailyRent: "",
-    totalDays: ""
+    dailyRent: ""
   };
   schema = {
     renterName: Joi.string().required(),
     toolName: Joi.string().required(),
+    toolId: Joi.string().required(),
     startDate: Joi.string().required(),
     endDate: Joi.string().required(),
+    bookingStatus: Joi.string().required(),
     commission: Joi.number().min(0),
-    rent: Joi.number().min(0),
+    totalRent: Joi.number().min(0),
+    totalDays: Joi.number().min(1),
+    ownerRent: Joi.number().min(0),
     security: Joi.number()
       .min(0)
       .required()
   };
   componentDidMount() {
     const { toolBooking } = this.props.location.state;
+
     const account = this.state.account;
     (account.toolName = toolBooking.tool.toolName),
+      (account.toolId = toolBooking.tool._id),
       (account.renterName = toolBooking.renter.fullName),
       (account.startDate = toolBooking.startDate);
     account.endDate = toolBooking.endDate;
-    account.security = toolBooking.security;
-    account.commission = toolBooking.commission;
-    // account.rent = toolBooking.rent;
+    account.bookingStatus = toolBooking.bookingStatus;
+    account.security = toolBooking.payment.security;
+    account.commission = toolBooking.payment.commission;
+    account.totalRent = toolBooking.payment.totalRent;
+    account.ownerRent = toolBooking.payment.ownerRent;
+    account.totalDays = toolBooking.payment.totalDays;
     this.setState({
       account,
       bookingId: toolBooking._id,
       renterId: toolBooking.renter._id,
       dailyRent: toolBooking.tool.dailyRent
     });
-    this.calculateRent(
-      account.endDate,
-      account.startDate,
-      toolBooking.tool.dailyRent
-    );
   }
   validate = () => {
     const options = { abortEarly: false };
@@ -87,13 +94,26 @@ class ConfirmToolBooking extends Component {
     }
 
     this.calculateRent(account.endDate, account.startDate, dailyRent);
-    const totalDays = diff_days(endDate, startDate) + 1;
-
+    if (account.bookingStatus == "Complete") {
+      const confirm = window.confirm("Do you want to End Booking");
+      if (confirm) {
+        const currentDate = new Date(
+          new Date().toLocaleDateString() + ",00:00"
+        );
+        if (endDate > currentDate || endDate < currentDate) {
+          toast.error("Please set End date to current Date ");
+          return;
+        }
+      } else {
+        return;
+      }
+    }
     try {
       const { account: bookingData, bookingId, renterId } = this.state;
       const confirm = window.confirm(
-        `Total Days :${totalDays}
-        Total Rent :${bookingData.rent}
+        `Total Days :${bookingData.totalDays}
+        Total Rent :${bookingData.totalRent}
+        Owner Rent :${bookingData.ownerRent}
         Commission :${bookingData.commission}
         Do you want to submit?`
       );
@@ -104,12 +124,9 @@ class ConfirmToolBooking extends Component {
         );
         if (result) {
           toast.success("Booking Confirm Successfully");
-          const { data: result2 } = await addToolBooking({
-            bookingId: bookingId,
-            renterId: renterId
-          });
-          if (result2)
-            toast.success("Booking add into AllRegisterRenters Successfully");
+          setTimeout(() => {
+            window.location.pathname = "/confirmToolBooking";
+          }, 1500);
         }
       }
     } catch (error) {
@@ -124,24 +141,27 @@ class ConfirmToolBooking extends Component {
       const totalRent = totalDays * dailyRent;
       const commission = parseInt(totalRent * 0.2);
       const account = this.state.account;
-      account.rent = totalRent;
+      account.totalRent = totalRent;
       account.commission = commission;
-      this.setState({ account, totalDays: totalDays });
+      account.totalDays = totalDays;
+      account.ownerRent = totalRent - commission;
+      this.setState({ account });
     } else {
       const totalDays = 1;
       const totalRent = totalDays * dailyRent;
       const commission = parseInt(totalRent * 0.2);
       const account = this.state.account;
-      account.rent = totalRent;
+      account.totalRent = totalRent;
       account.commission = commission;
+      account.totalDays = totalDays;
+      account.ownerRent = totalRent - commission;
       this.setState({
-        totalDays,
         account
       });
     }
   };
   render() {
-    const { account, errors, totalDays, dailyRent } = this.state;
+    const { account, errors, dailyRent } = this.state;
     return (
       <React.Fragment>
         <div className="container" style={{ background: "#E6F2F3" }}>
@@ -154,7 +174,7 @@ class ConfirmToolBooking extends Component {
                 margin: "20px 0px 15px 85px"
               }}
             >
-              <b> Total Days:{totalDays}</b>
+              <b> Total Days:{account.totalDays}</b>
             </div>
             <div
               className="col-sm-2"
@@ -174,7 +194,7 @@ class ConfirmToolBooking extends Component {
                 margin: "20px 0px 15px 50px"
               }}
             >
-              <b>Total Rent:{account.rent}</b>
+              <b>Total Rent:{account.totalRent}</b>
             </div>
             <div
               className="col-sm-2"
@@ -254,9 +274,17 @@ class ConfirmToolBooking extends Component {
                     label="Rent"
                     name="rent"
                     type="number"
-                    value={account.rent}
+                    value={account.totalRent}
                     onChange={this.handleChange}
-                    errors={errors.rent}
+                    errors={errors.totalRent}
+                  />
+                  <Select
+                    label="BookingStatus"
+                    name="bookingStatus"
+                    onChange={this.handleChange}
+                    value=""
+                    options={["Continue", "Complete"]}
+                    errors={errors.bookingStatus}
                   />
                   <button
                     style={{ marginTop: "4px", marginLeft: "750px" }}

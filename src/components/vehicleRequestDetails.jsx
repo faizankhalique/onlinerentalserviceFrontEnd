@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import Joi from "joi-browser";
 import {
-  updateVehicleRequest,
+  approvedVehicleRequest,
   sendEmail
 } from "./services/vehicleRequestService";
 import { addVehicle } from "./services/vehicleService";
@@ -85,7 +85,7 @@ class VehicleRequestDetails extends Component {
     if (isConfirm) {
       const { vehicleRequest } = this.state;
       try {
-        const { data: response1 } = await updateVehicleRequest(requestId);
+        const { data: response1 } = await approvedVehicleRequest(requestId);
         if (response1) {
           toast.success("Request Approved Sucessfully");
           const {

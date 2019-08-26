@@ -127,7 +127,7 @@ class UserProfile extends Component {
                 width: "300px",
                 height: "250px",
                 // border: "1px solid black",
-                backgroundColor: "#E6F2F3",
+                backgroundColor: "white",
                 margin: "50px 10px 0 40px"
               }}
             >
@@ -153,18 +153,18 @@ class UserProfile extends Component {
             </div>
             <div
               className="col-sm-6"
-              style={{ backgroundColor: "#E6F2F3", margin: "50px 10px 0 40px" }}
+              style={{ backgroundColor: "white", margin: "50px 10px 0 40px" }}
             >
               <form
                 onSubmit={this.handleSubmit}
-                style={{ backgroundColor: "#E6F2F3" }}
+                // style={{ backgroundColor: "#E6F2F3" }}
               >
                 <h1
                   style={{
                     fontFamily: "Arial, Helvetica, sans-serif"
                   }}
                 >
-                  User Registration Form
+                  Update Profile
                 </h1>
                 <div className="form-group">
                   <Input

@@ -114,11 +114,11 @@ class ShopRentRequests extends Component {
   handleDelete = async id => {
     const confirm = window.confirm("Do you want to Delete Request?");
     if (confirm) {
-      const orignalShopRentRequests = this.state.shopRentRequests;
-      const shopRentRequests = orignalShopRentRequests.filter(
+      const orignalShopRentRequests = this.state.pendingShopRentRequests;
+      const pendingShopRentRequests = orignalShopRentRequests.filter(
         hr => hr._id !== id
       );
-      this.setState({ shopRentRequests });
+      this.setState({ pendingShopRentRequests });
       try {
         const { data: response } = await deleteShopRentRequest(id);
         if (response) toast.success("shop Request Delete Successfuly");
@@ -132,7 +132,7 @@ class ShopRentRequests extends Component {
         else if (error.response && error.response.status === 403)
           toast.error(`Error:403 ${error.response.statusText}`);
         else toast.error(`${error.response.data}`);
-        this.setState({ shopRentRequests: orignalShopRentRequests });
+        this.setState({ pendingShopRentRequests: orignalShopRentRequests });
       }
     }
   };
@@ -254,7 +254,6 @@ class ShopRentRequests extends Component {
                     <th scope="col">EndDate</th>
                     <th scope="col">Status</th>
                     <th scope="col">ApprovedDate</th>
-                    <th />
                   </tr>
                 </thead>
                 <tbody>
@@ -291,12 +290,6 @@ class ShopRentRequests extends Component {
                       <td>{shopRentRequest.endDate}</td>
                       <td>{shopRentRequest.status}</td>
                       <td>{shopRentRequest.ApprovedDate}</td>
-
-                      <td>
-                        <button className="btn btn-sm btn-danger">
-                          Delete
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>

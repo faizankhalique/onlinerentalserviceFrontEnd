@@ -1,19 +1,42 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { getHouseRentRequests } from "../../services/properties/house/houseBookingService";
+import {
+  confirmHouseBooking,
+  getHouseBookings
+} from "../../services/properties/house/houseBookingService";
+import { addHouseBooking } from "../../services/allRegisterRenters";
 class HouseBookings extends Component {
   state = { houseBookings: [] };
   async componentDidMount() {
     try {
-      const { data: houseBookings } = await getHouseRentRequests();
+      const { data: houseBookings } = await getHouseBookings();
       if (houseBookings) this.setState({ houseBookings });
     } catch (error) {
       toast.error("" + error);
     }
   }
-  handleBooking = requestId => {
-    toast.success(requestId);
+  handleBooking = async (bookingId, renterId) => {
+    try {
+      const confirm = window.confirm("Do you want to confirm Tool Booking?");
+      if (confirm) {
+        const { data } = await confirmHouseBooking(bookingId);
+        if (data) {
+          toast.success("Tool Booking Confirm successfully");
+          const { data: result2 } = await addHouseBooking({
+            bookingId: bookingId,
+            renterId: renterId
+          });
+          if (result2)
+            toast.success("Booking add into AllRegisterRenters Successfully");
+          setTimeout(() => {
+            window.location.pathname = "/renters";
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      toast.error(error + "");
+    }
   };
   handleDelete = requestId => {
     const isConfim = window.confirm("Do you want to Delete?");
@@ -37,7 +60,7 @@ class HouseBookings extends Component {
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
 
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">BookingStatus</th>
                     <th />
                     <th />
                   </tr>
@@ -46,7 +69,7 @@ class HouseBookings extends Component {
                   {houseBookings &&
                     houseBookings.map(
                       houseBooking =>
-                        houseBooking.bookingConfirmation == "Pending" && (
+                        houseBooking.bookingStatus == "Pending" && (
                           <tr key={houseBooking._id}>
                             <td>
                               <Link
@@ -64,10 +87,9 @@ class HouseBookings extends Component {
                             <td>{houseBooking.owner.fullName}</td>
                             <td>{houseBooking.startDate}</td>
                             <td>{houseBooking.endDate}</td>
-
-                            <td>{houseBooking.bookingConfirmation}</td>
+                            <td>{houseBooking.bookingStatus}</td>
                             <td>
-                              <Link
+                              {/* <Link
                                 to={{
                                   pathname: "/confirmHouseBooking",
                                   state: {
@@ -75,15 +97,18 @@ class HouseBookings extends Component {
                                   }
                                 }}
                               >
-                                <button
-                                  className="btn btn-primary btn-sm"
-                                  // onClick={() => {
-                                  //   this.handleBooking(houseBooking._id);
-                                  // }}
-                                >
-                                  Confirm
-                                </button>
-                              </Link>
+                              </Link> */}
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => {
+                                  this.handleBooking(
+                                    houseBooking._id,
+                                    houseBooking.renter._id
+                                  );
+                                }}
+                              >
+                                Confirm
+                              </button>
                             </td>
                             <td>
                               <button
@@ -102,7 +127,7 @@ class HouseBookings extends Component {
               </table>
             </div>
           </div>
-          <div className="row">
+          {/* <div className="row">
             <h3 style={{ marginLeft: "350px" }}>Confirm Booking Table</h3>
 
             <div className="col-lg-12">
@@ -110,21 +135,18 @@ class HouseBookings extends Component {
                 <thead className="thead-dark">
                   <tr>
                     <th scope="col">RequesterName</th>
-                    <th scope="col">VechileName</th>
-                    <th scope="col">VechileOwner</th>
+                    <th scope="col">HouseLocation</th>
+                    <th scope="col">HouseOwner</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-
-                    <th scope="col">Confirmation</th>
-                    <th />
-                    <th />
+                    <th scope="col">BookingStatus</th>
                   </tr>
                 </thead>
                 <tbody>
                   {houseBookings &&
                     houseBookings.map(
                       houseBooking =>
-                        houseBooking.bookingConfirmation == "Confirm" && (
+                        houseBooking.bookingStatus === "Confirm" && (
                           <tr key={houseBooking._id}>
                             <td>
                               <Link
@@ -142,43 +164,14 @@ class HouseBookings extends Component {
                             <td>{houseBooking.owner.fullName}</td>
                             <td>{houseBooking.startDate}</td>
                             <td>{houseBooking.endDate}</td>
-                            <td>{houseBooking.bookingConfirmation}</td>
-                            <td>
-                              <Link
-                                to={{
-                                  pathname: "/confirmHouseBooking",
-                                  state: {
-                                    houseBooking: houseBooking
-                                  }
-                                }}
-                              >
-                                <button
-                                  className="btn btn-primary btn-sm"
-                                  // onClick={() => {
-                                  //   this.handleBooking(houseBooking._id);
-                                  // }}
-                                >
-                                  Update
-                                </button>
-                              </Link>
-                            </td>
-                            <td>
-                              <button
-                                className="btn btn-danger btn-sm"
-                                onClick={() => {
-                                  this.handleDelete(houseBooking._id);
-                                }}
-                              >
-                                Delete
-                              </button>
-                            </td>
+                            <td>{houseBooking.bookingStatus}</td>
                           </tr>
                         )
                     )}
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
         </div>
       </React.Fragment>
     );

@@ -6,6 +6,7 @@ import authService from "../../services/authService";
 import { addHouseRentRequest } from "../../services/properties/house/houseBookingService";
 import Input from "./../../common/input";
 import TextArea from "./../../common/textArea";
+import getDays from "../../../utils/getDays";
 class HouseRentRequestForm extends Component {
   state = {
     account: {
@@ -75,15 +76,32 @@ class HouseRentRequestForm extends Component {
 
     if (date2 > date1) {
       months = parseInt(diff_months(date2, date1));
-      if (months === 0) months = 1;
+      if (months === 0) {
+        months = 1;
+        // const { firstDay, lastDay } = getDays(account.endDate);
+        // const acc = { ...this.state.account };
+        // acc.startDate = firstDay;
+        // acc.endDate = lastDay;
+        // this.setState({ account: acc });
+        // console.log(firstDay);
+        // console.log(lastDay);
+      }
     } else if (date1 > date2) {
       toast.error("endDate must be greater than  startdate.");
       return;
     } else {
       months = 1;
+      // const { firstDay, lastDay } = getDays(account.endDate);
+      // const acc = { ...this.state.account };
+      // acc.startDate = firstDay;
+      // acc.endDate = lastDay;
+      // this.setState({ account: acc });
+      // console.log(firstDay);
+      // console.log(lastDay);
     }
     try {
       const houseRentRequest = { ...this.state.account };
+      console.log(houseRentRequest);
       const confirm = window.confirm(
         `your total months are ${months} and Rent per Month will ${monthlyRent} . Do you want to submit request?`
       );
@@ -107,7 +125,7 @@ class HouseRentRequestForm extends Component {
     const { account, errors, houseImage, houseImages, house } = this.state;
     return (
       <React.Fragment>
-        <div className="container-fluid">
+        <div className="container-fluid" style={{ marginTop: "25px" }}>
           <div className="row">
             <div className="col-sm-6">
               <form

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 import authService from "../../services/authService";
 import { getRenterShopBookings } from "../../services/properties/shop/shopBookingService";
+import { Link } from "react-router-dom";
 class RenterShopsBookings extends Component {
   state = { shopBookings: [] };
   async componentDidMount() {
@@ -23,27 +24,49 @@ class RenterShopsBookings extends Component {
               <table className="table">
                 <thead className="thead-dark">
                   <tr>
-                    <th scope="col">HouseLocation</th>
+                    <th scope="col">ShopLocation</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">TotalMonths</th>
+                    <th scope="col">Security</th>
+                    <th scope="col">BookingStatus</th>
+                    <th scope="col" />
                   </tr>
                 </thead>
                 <tbody>
                   {shopBookings &&
-                    shopBookings.map(shopBooking => (
-                      <tr key={shopBooking._id}>
-                        <td>
-                          {shopBooking.shop.city}
-                          {"_"}
-                          {shopBooking.shop.location}
-                        </td>
-                        <td>{shopBooking.startDate}</td>
-
-                        <td>{shopBooking.rent}</td>
-                        <td>{shopBooking.bookingConfirmation}</td>
-                      </tr>
-                    ))}
+                    shopBookings.map(
+                      shopBooking =>
+                        shopBooking.bookingStatus !== "Pending" && (
+                          <tr key={shopBooking._id}>
+                            <td>
+                              {shopBooking.shop.city}
+                              {"_"}
+                              {shopBooking.shop.location}
+                            </td>
+                            <td>{shopBooking.startDate}</td>
+                            <td>{shopBooking.endDate}</td>
+                            <td>{shopBooking.totalMonths}</td>
+                            <td>{shopBooking.security}</td>
+                            <td>{shopBooking.bookingStatus}</td>
+                            <td>
+                              <Link
+                                to={{
+                                  pathname: "/renterShopPaymentHistory",
+                                  state: {
+                                    payments: shopBooking.payments,
+                                    shopBookingId: shopBooking._id
+                                  }
+                                }}
+                              >
+                                <button className="btn btn-sm btn-primary">
+                                  PaymentsDetails
+                                </button>
+                              </Link>
+                            </td>
+                          </tr>
+                        )
+                    )}
                 </tbody>
               </table>
             </div>

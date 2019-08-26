@@ -1,19 +1,43 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { getShopRentRequests } from "../../services/properties/shop/shopBookingService";
+import {
+  confirmShopBooking,
+  getRenterShopBookings,
+  getShopBookings
+} from "../../services/properties/shop/shopBookingService";
+import { addShopBooking } from "../../services/allRegisterRenters";
 class ShopBookings extends Component {
   state = { shopBookings: [] };
   async componentDidMount() {
     try {
-      const { data: shopBookings } = await getShopRentRequests();
+      const { data: shopBookings } = await getShopBookings();
       if (shopBookings) this.setState({ shopBookings });
     } catch (error) {
       toast.error("" + error);
     }
   }
-  handleBooking = requestId => {
-    toast.success(requestId);
+  handleBooking = async (bookingId, renterId) => {
+    try {
+      const confirm = window.confirm("Do you want to confirm Tool Booking?");
+      if (confirm) {
+        const { data } = await confirmShopBooking(bookingId);
+        if (data) {
+          toast.success("Tool Booking Confirm successfully");
+          const { data: result2 } = await addShopBooking({
+            bookingId: bookingId,
+            renterId: renterId
+          });
+          if (result2)
+            toast.success("Booking add into AllRegisterRenters Successfully");
+          setTimeout(() => {
+            window.location.pathname = "/renters";
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      toast.error(error + "");
+    }
   };
   handleDelete = requestId => {
     const isConfim = window.confirm("Do you want to Delete?");
@@ -36,7 +60,7 @@ class ShopBookings extends Component {
                     <th scope="col">ShopOwner</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">BookingStatus</th>
                     <th />
                     <th />
                   </tr>
@@ -45,7 +69,7 @@ class ShopBookings extends Component {
                   {shopBookings &&
                     shopBookings.map(
                       shopBooking =>
-                        shopBooking.bookingConfirmation == "Pending" &&
+                        shopBooking.bookingStatus == "Pending" &&
                         shopBooking.status == "Approved" && (
                           <tr key={shopBooking._id}>
                             <td>
@@ -64,25 +88,19 @@ class ShopBookings extends Component {
                             <td>{shopBooking.owner.fullName}</td>
                             <td>{shopBooking.startDate}</td>
                             <td>{shopBooking.endDate}</td>
-                            <td>{shopBooking.bookingConfirmation}</td>
+                            <td>{shopBooking.bookingStatus}</td>
                             <td>
-                              <Link
-                                to={{
-                                  pathname: "/confirmShopBooking",
-                                  state: {
-                                    shopBooking: shopBooking
-                                  }
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => {
+                                  this.handleBooking(
+                                    shopBooking._id,
+                                    shopBooking.renter._id
+                                  );
                                 }}
                               >
-                                <button
-                                  className="btn btn-primary btn-sm"
-                                  // onClick={() => {
-                                  //   this.handleBooking(shopBooking._id);
-                                  // }}
-                                >
-                                  Confirm
-                                </button>
-                              </Link>
+                                Confirm
+                              </button>
                             </td>
                             <td>
                               <button
@@ -101,7 +119,7 @@ class ShopBookings extends Component {
               </table>
             </div>
           </div>
-          <div className="row">
+          {/* <div className="row">
             <h3 style={{ marginLeft: "350px" }}>Confirm Booking Table</h3>
 
             <div className="col-lg-12">
@@ -113,7 +131,7 @@ class ShopBookings extends Component {
                     <th scope="col">ShopOwner</th>
                     <th scope="col">StartDate</th>
                     <th scope="col">EndDate</th>
-                    <th scope="col">Confirmation</th>
+                    <th scope="col">BookingStatus</th>
                     <th />
                     <th />
                   </tr>
@@ -122,7 +140,7 @@ class ShopBookings extends Component {
                   {shopBookings &&
                     shopBookings.map(
                       shopBooking =>
-                        shopBooking.bookingConfirmation == "Confirm" &&
+                        shopBooking.bookingStatus == "Confirm" &&
                         shopBooking.status == "Approved" && (
                           <tr key={shopBooking._id}>
                             <td>
@@ -141,33 +159,19 @@ class ShopBookings extends Component {
                             <td>{shopBooking.owner.fullName}</td>
                             <td>{shopBooking.startDate}</td>
                             <td>{shopBooking.endDate}</td>
-                            <td>{shopBooking.bookingConfirmation}</td>
-                            <td>
-                              <Link
-                                to={{
-                                  pathname: "/confirmShopBooking",
-                                  state: {
-                                    shopBooking: shopBooking
-                                  }
-                                }}
-                              >
-                                <button
-                                  className="btn btn-primary btn-sm"
-                                  // onClick={() => {
-                                  //   this.handleBooking(shopBooking._id);
-                                  // }}
-                                >
-                                  Update
-                                </button>
-                              </Link>
-                            </td>
+                            <td>{shopBooking.bookingStatus}</td>
                             <td>
                               <button
-                                className="btn btn-danger btn-sm"
-                                onClick={() => {
-                                  this.handleDelete(shopBooking._id);
-                                }}
+                                className="btn btn-primary btn-sm"
+                                // onClick={() => {
+                                //   this.handleBooking(shopBooking._id);
+                                // }}
                               >
+                                Update
+                              </button>
+                            </td>
+                            <td>
+                              <button className="btn btn-danger btn-sm">
                                 Delete
                               </button>
                             </td>
@@ -177,7 +181,7 @@ class ShopBookings extends Component {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
         </div>
       </React.Fragment>
     );

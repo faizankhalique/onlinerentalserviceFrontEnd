@@ -7,12 +7,20 @@ import SearchBox from "./common/searchBox";
 import { paginate } from "./../utils/paginate";
 import Pagination from "./common/pagination";
 class Renters extends Component {
-  state = { rentersDetails: [], currentPage: 1, pageSize: 8, searchQuery: "" };
+  state = {
+    rentersDetails: [],
+    bookingsDetails: {},
+    currentPage: 1,
+    pageSize: 8,
+    searchQuery: ""
+  };
   async componentDidMount() {
     try {
-      const { data: rentersDetails } = await getRentersDetails();
-      if (rentersDetails) {
-        this.setState({ rentersDetails });
+      const { data } = await getRentersDetails();
+      if (data) {
+        const { renterDetails: rentersDetails, bookingsDetails } = data;
+
+        this.setState({ rentersDetails, bookingsDetails });
       }
     } catch (error) {
       toast.error("" + error);
@@ -41,19 +49,108 @@ class Renters extends Component {
     return paginateRenter;
   };
   render() {
-    const { rentersDetails, pageSize, currentPage, searchQuery } = this.state;
+    const {
+      rentersDetails,
+      bookingsDetails,
+      pageSize,
+      currentPage,
+      searchQuery
+    } = this.state;
     const allRentersDetails = this.filterRenter();
-    console.log(allRentersDetails);
+
     return (
       <React.Fragment>
         <div className="container">
+          <div class="row" style={{ marginTop: "8px" }}>
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="card h-70">
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <Link to="#">Vehicles</Link>
+                  </h4>
+                  <p class="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      CurrentBookings: {bookingsDetails.vehiclesOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      TodayEndBookings:{" "}
+                      {bookingsDetails.todayVehiclesEndBookings}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="card h-70">
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <Link to="#">Houses</Link>
+                  </h4>
+                  <p class="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      CurrentBookings: {bookingsDetails.housesOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      TodayEndBookings: {bookingsDetails.todayHousesEndBookings}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="card h-70">
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <Link to="#">Shops</Link>
+                  </h4>
+                  <p class="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      CurrentBookings: {bookingsDetails.shopsOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      TodayEndBookings: {bookingsDetails.todayShopsEndBookings}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="card h-70">
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <Link to="#">Tools</Link>
+                  </h4>
+                  <p class="card-text">
+                    <b style={{ fontFamily: "Book Antiqua" }}>
+                      CurrentBookings: {bookingsDetails.toolsOnRent}
+                    </b>
+                    <br />
+                    <b
+                      style={{ fontFamily: "Book Antiqua", marginTop: "10px" }}
+                    >
+                      TodayEndBookings: {bookingsDetails.todayToolsEndBookings}
+                    </b>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="row">
             <div className="col-lg-12">
               <div style={{ marginLeft: "870px" }}>
                 {" "}
                 <SearchBox value={searchQuery} onChange={this.handleSearch} />
               </div>
-              <table className="table">
+              <table className="table" style={{ backgroundColor: "white" }}>
                 <thead className="thead-dark">
                   <tr>
                     <th>Name</th>
@@ -61,9 +158,6 @@ class Renters extends Component {
                     <th>Houses</th>
                     <th>Shops</th>
                     <th>Tools</th>
-
-                    <th>HousePayments</th>
-                    <th>ShopPayments</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -82,216 +176,65 @@ class Renters extends Component {
                         </Link>
                       </td>
                       <td>
-                        <div className="dropdown">
-                          <Link
-                            className="btn btn-primary btn-sm dropdown-toggle"
-                            to="#"
-                            role="button"
-                            id="dropdownMenuLink"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
+                        <Link
+                          to={{
+                            pathname: "/renterAllVehiclesBookingsDetails",
+                            state: {
+                              // vehicleBookingId: vehicleBooking._id,
+                              renterId: renterData.renter._id
+                            }
+                          }}
+                        >
+                          <button className="btn btn-sm btn-primary">
                             Vehicles Bookings
-                          </Link>
-
-                          <div
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownMenuLink"
-                          >
-                            {renterData.vehiclesBookings.map(vehicleBooking => (
-                              <Link
-                                className="dropdown-item"
-                                to={{
-                                  pathname: "/vehicleBookingDetails",
-                                  state: {
-                                    vehicleBookingId: vehicleBooking._id
-                                  }
-                                }}
-                              >
-                                {`VehicleBooking`}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
+                          </button>
+                        </Link>
                       </td>
                       <td>
-                        <div className="dropdown">
-                          <Link
-                            className="btn btn-primary btn-sm dropdown-toggle"
-                            to="#"
-                            role="button"
-                            id="dropdownMenuLink"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
+                        <Link
+                          to={{
+                            pathname: "/renterAllHousesBookingsDetails",
+                            state: {
+                              // vehicleBookingId: vehicleBooking._id,
+                              renterId: renterData.renter._id
+                            }
+                          }}
+                        >
+                          <button className="btn btn-sm btn-primary">
                             House Bookings
-                          </Link>
-
-                          <div
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownMenuLink"
-                          >
-                            {renterData.housesBookings.map(houseBooking => (
-                              <Link
-                                className="dropdown-item"
-                                to={{
-                                  pathname: "/houseBookingDetails",
-                                  state: {
-                                    houseBookingId: houseBooking._id
-                                  }
-                                }}
-                              >
-                                {`HouseBooking`}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
+                          </button>
+                        </Link>
                       </td>
                       <td>
-                        <div className="dropdown">
-                          <Link
-                            className="btn btn-primary btn-sm dropdown-toggle"
-                            to="#"
-                            role="button"
-                            id="dropdownMenuLink"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
+                        <Link
+                          to={{
+                            pathname: "/renterAllShopsBookingsDetails",
+                            state: {
+                              // vehicleBookingId: vehicleBooking._id,
+                              renterId: renterData.renter._id
+                            }
+                          }}
+                        >
+                          <button className="btn btn-sm btn-primary">
                             Shop Bookings
-                          </Link>
-
-                          <div
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownMenuLink"
-                          >
-                            {renterData.shopsBookings.map(shopBooking => (
-                              <Link
-                                className="dropdown-item"
-                                to={{
-                                  pathname: "/shopBookingDetails",
-                                  state: {
-                                    shopBookingId: shopBooking._id
-                                  }
-                                }}
-                              >
-                                {`ShopBooking`}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
+                          </button>
+                        </Link>
                       </td>
 
                       <td>
-                        <div className="dropdown">
-                          <Link
-                            className="btn btn-primary btn-sm dropdown-toggle"
-                            to="#"
-                            role="button"
-                            id="dropdownMenuLink"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            Tool Bookings
-                          </Link>
-
-                          <div
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownMenuLink"
-                          >
-                            {renterData.toolsBookings.map(toolBooking => (
-                              <Link
-                                className="dropdown-item"
-                                to={{
-                                  pathname: "/toolBookingDetails",
-                                  state: {
-                                    toolBookingId: toolBooking._id
-                                  }
-                                }}
-                              >
-                                {`ToolBooking`}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="dropdown">
-                          <Link
-                            className="btn btn-primary btn-sm dropdown-toggle"
-                            to="#"
-                            role="button"
-                            id="dropdownMenuLink"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            House Payments
-                          </Link>
-
-                          <div
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownMenuLink"
-                          >
-                            {renterData.housePayments.map(housePayment => (
-                              <Link
-                                className="dropdown-item"
-                                to={{
-                                  pathname: "/housePayments",
-                                  state: {
-                                    renterId: renterData._id,
-                                    housePaymentId: housePayment._id,
-                                    houseBookingId: housePayment.houseBooking,
-                                    security: housePayment.security
-                                  }
-                                }}
-                              >
-                                {`HousePayment`}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        {" "}
-                        <div className="dropdown">
-                          <Link
-                            className="btn btn-primary btn-sm dropdown-toggle"
-                            to="#"
-                            role="button"
-                            id="dropdownMenuLink"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                          >
-                            Shop Payments
-                          </Link>
-
-                          <div
-                            className="dropdown-menu"
-                            aria-labelledby="dropdownMenuLink"
-                          >
-                            {renterData.shopPayments.map(shopPayment => (
-                              <Link
-                                className="dropdown-item"
-                                to={{
-                                  pathname: "/shopPayments",
-                                  state: {
-                                    renterId: renterData._id,
-                                    shopPaymentId: shopPayment._id,
-                                    shopBookingId: shopPayment.shopBooking,
-                                    security: shopPayment.security
-                                  }
-                                }}
-                              >
-                                {`ShopPayment `}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
+                        <Link
+                          to={{
+                            pathname: "/renterAllToolsBookingsDetails",
+                            state: {
+                              // vehicleBookingId: vehicleBooking._id,
+                              renterId: renterData.renter._id
+                            }
+                          }}
+                        >
+                          <button className="btn btn-sm btn-primary">
+                            Tools Bookings
+                          </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}

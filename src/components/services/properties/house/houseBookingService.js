@@ -4,6 +4,9 @@ const apiEndPoint = baseUrl.concat("housebooking/");
 export async function getHouseRentRequests() {
   return http.get(apiEndPoint + "houserentrequests");
 }
+export async function getHouseBookings() {
+  return http.get(apiEndPoint + "housebookings");
+}
 export async function getRenterHouseRentRequests(id) {
   return http.get(apiEndPoint + "houserentrequest/" + id);
 }
@@ -27,4 +30,10 @@ export async function sendEmail(emailData) {
 }
 export async function getRenterHouseBooking(id) {
   return http.get(apiEndPoint + "/" + id);
+}
+export async function confirmHouseBooking(id) {
+  return http.put(apiEndPoint + "confirmbooking/" + id);
+}
+export async function updateHousePayment(id, payment) {
+  return http.put(apiEndPoint + "updatepayment/" + id, payment);
 }
